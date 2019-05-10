@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 import { Container, Title, Input, Button, ButtonText } from "./styles";
+import api from "../../services/api";
+import AsyncStorage from "@react-native-community/async-storage";
+import { Text } from "react-native";
+
 //import { Platform, DeviceEventEmitter } from "react-native";
 //import QuickActions from "react-native-quick-actions";
 
@@ -27,6 +31,29 @@ export default class App extends Component {
     headerTransparent: true,
     headerTintColor: "#fff"
   };
+
+  state = {
+    errorMessage: null
+  };
+
+  registerUser = async () => {
+    try {
+      const response = await api.post("/auth/authenticate", {
+        email: "daniel.david772f@gmail.com",
+        password: "123456",
+        location: "Areia"
+      });
+      this.setState({ errorMessage: response });
+
+      const { user, token } = response.data;
+      await AsyncStorage.multiSet([
+        ["@Security:token", token],
+        ["@Security:user", JSON.stringify(user)]
+      ]);
+    } catch (err) {
+      this.setState({ errorMessage: response.data.error });
+    }
+  };
   render() {
     return (
       <Container>
@@ -34,9 +61,12 @@ export default class App extends Component {
         <Input />
         <Input />
         <Input />
-        <Button>
+        <Button onPress={this.registerUser}>
           <ButtonText>Register</ButtonText>
         </Button>
+        {this.state.errorMessage ? (
+          <Text>{this.state.errorMessage}</Text>
+        ) : null}
       </Container>
     );
   }

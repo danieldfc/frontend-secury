@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Container, Title } from "./styles";
 
 export default class App extends Component {
   static navigationOptions = {
@@ -9,18 +9,9 @@ export default class App extends Component {
   };
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to police!</Text>
-      </View>
+      <Container style={styles.container}>
+        <Title style={styles.welcome}>Welcome to police!</Title>
+      </Container>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#059"
-  }
-});

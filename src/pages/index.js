@@ -1,31 +1,60 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
+
+import { Container, Title, Button, ButtonText } from "./styles";
 
 export default class App extends Component {
   static navigationOptions = {
-    title: "Home",
-    backgroundColor: null
+    title: "Security Total",
+    headerTransparent: true,
+    headerTintColor: "#fff"
   };
 
-  signIn = async () => {};
+  state = {
+    option: null
+  };
+
+  async componentDidMount() {
+    const { option } = this.state;
+
+    const optionState = await AsyncStorage.getItem("@Security:Option", option);
+
+    if (optionState === "Police") this.props.navigation.navigate("Police");
+
+    if (optionState === "User") this.props.navigation.navigate("User");
+  }
+
+  handlerPolice = async () => {
+    const { option } = this.state;
+
+    this.setState({ option: "Police" });
+
+    await AsyncStorage.setItem("@Security:Option", option);
+
+    this.props.navigation.navigate("Police");
+  };
+
+  handlerUser = async () => {
+    const { option } = this.state;
+
+    this.setState({ option: "User" });
+
+    await AsyncStorage.setItem("@Security:Option", option);
+
+    this.props.navigation.navigate("User");
+  };
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Welcome to Secuty Total!</Text>
-        <TouchableOpacity style={styles.button} onPress={this.signIn}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
-      </View>
+      <Container>
+        <Title>Qual sua escolha?</Title>
+        <Button onPress={this.handlerPolice}>
+          <ButtonText>Police</ButtonText>
+        </Button>
+        <Button onPress={this.handlerUser}>
+          <ButtonText>User</ButtonText>
+        </Button>
+      </Container>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#059"
-  }
-});

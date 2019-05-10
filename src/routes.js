@@ -4,7 +4,7 @@ import {
   createSwitchNavigator
 } from "react-navigation";
 
-import Home from "./pages";
+import Home from "./pages/Home";
 import Police from "./pages/Police";
 import User from "./pages/User";
 

@@ -12,7 +12,7 @@ import { Text, Alert } from "react-native";
 //     type: "Orders",
 //     title: "See your orders",
 //     subtitle: "Compose",
-//     icon: Platform.OS === 'ios' ? "Icon" : "icon",
+//     icon: Platform.OS === 'ios' ? "Icona" : "icon",
 //     userInfo: {
 //       url: "app://orders"
 //     }

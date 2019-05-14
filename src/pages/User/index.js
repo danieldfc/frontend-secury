@@ -1,8 +1,20 @@
 import React, { Component } from "react";
-import { Container, Title, Input, Button, ButtonText } from "./styles";
 import api from "../../services/api";
 import AsyncStorage from "@react-native-community/async-storage";
-import { Text, Alert } from "react-native";
+import { Alert, StyleSheet } from "react-native";
+import logo from "../../assets/logo.png";
+import {
+  Container,
+  Title,
+  Input,
+  Button,
+  ButtonText,
+  Image,
+  ImageContainer,
+  InputContainer,
+  Icon,
+  EyeButton
+} from "./styles";
 
 //import { Platform, DeviceEventEmitter } from "react-native";
 //import QuickActions from "react-native-quick-actions";
@@ -32,11 +44,25 @@ export default class App extends Component {
     headerTintColor: "#fff"
   };
 
-  state = {
-    loggedInUser: null,
-    errorMessage: null,
-    email: null,
-    password: null
+  constructor() {
+    super();
+    this.state = {
+      loggedInUser: null,
+      errorMessage: null,
+      email: null,
+      password: null,
+      showPass: true,
+      press: false
+    };
+  }
+
+  showPass = () => {
+    const { press } = this.state;
+    if (press === false) {
+      this.setState({ showPass: false, press: true });
+    } else {
+      this.setState({ showPass: true, press: false });
+    }
   };
 
   // getProjectList = async () => {
@@ -87,20 +113,54 @@ export default class App extends Component {
   render() {
     return (
       <Container>
-        <Title>Register for User</Title>
-        <Input
-          placeholder="Email"
-          autoCapitalize="none"
-          autoCorrect={false}
-          placeholderTextColor="#ccc"
-          onChangeText={email => this.setState({ email })}
-        />
-        <Input
-          placeholder="Password"
-          placeholderTextColor="#ccc"
-          onChangeText={password => this.setState({ password })}
-          secureTextEntry
-        />
+        <ImageContainer>
+          <Image source={logo} />
+          <Title>Register for User</Title>
+        </ImageContainer>
+        <InputContainer>
+          <Icon
+            style={styles.inputIcon}
+            name={"ios-person-outline"}
+            size={28}
+            color={"rgba(255,255,255,0.7)"}
+          />
+          <Input
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor={"rgba(255,255,255,0.7)"}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={email => this.setState({ email })}
+          />
+        </InputContainer>
+
+        <InputContainer>
+          <Icon
+            style={styles.inputIcon}
+            name={"ios-lock-outline"}
+            size={28}
+            color={"rgba(255,255,255,0.7)"}
+          />
+          <Input
+            placeholder="Password"
+            placeholderTextColor="#ccc"
+            onChangeText={password => this.setState({ password })}
+            secureTextEntry={this.state.showPass}
+          />
+          <EyeButton onPress={this.showPass.bind(this)}>
+            <Icon
+              name={
+                this.state.press === false
+                  ? "ios-eye-off-outline"
+                  : "ios-eye-outline"
+              }
+              size={26}
+              color={"rgba(255,255,255,0.7)"}
+            />
+          </EyeButton>
+        </InputContainer>
+
         <Button onPress={this.registerUser}>
           <ButtonText>Register</ButtonText>
         </Button>
@@ -128,3 +188,20 @@ export default class App extends Component {
     );
   }
 }
+const styles = StyleSheet.create({
+  inputIcon: {
+    position: "absolute",
+    top: 8,
+    left: 37
+  },
+  input: {
+    width: WIDTH - 55,
+    height: 45,
+    backgroundColor: "rgba(0, 0, 0, 0.35)",
+    color: "rgba(255, 255, 255, 0.7)",
+    fontSize: 16,
+    borderRadius: 45,
+    marginHorizontal: 25,
+    paddingLeft: 10
+  }
+});

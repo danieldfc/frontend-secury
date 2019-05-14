@@ -16,6 +16,8 @@ import {
   EyeButton
 } from "./styles";
 
+const { width: WIDTH } = Dimensions.get("window");
+
 //import { Platform, DeviceEventEmitter } from "react-native";
 //import QuickActions from "react-native-quick-actions";
 

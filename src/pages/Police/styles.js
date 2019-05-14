@@ -2,11 +2,43 @@ import styled from "styled-components/native";
 
 export const Container = styled.View`
   flex: 1;
-  background-color: #059;
+  background: #059;
   justify-content: center;
   align-items: center;
 `;
 
 export const Title = styled.Text`
-  font-size: 30px;
+  font-size: 20px;
+  color: #fff;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-bottom: 50px;
+  margin-top: 10px;
+  opacity: 0.5;
+`;
+
+export const ButtonText = styled.Text`
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+`;
+
+export const ImageContainer = styled.View`
+  align-items: center;
+  margin-bottom: 50px;
+`;
+
+export const Image = styled.Image`
+  width: 120px;
+  height: 120px;
+`;
+
+export const InputContainer = styled.View`
+  margin-top: 10px;
+`;
+
+export const EyeButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 10px;
+  right: 37px;
 `;

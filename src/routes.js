@@ -7,6 +7,8 @@ import {
 import Home from "./pages/Home";
 import Police from "./pages/Police";
 import User from "./pages/User";
+import MapaUser from "./pages/User/Mapa";
+import MapaPolice from "./pages/Police/Mapa";
 
 const Routes = createAppContainer(
   createSwitchNavigator({
@@ -18,11 +20,17 @@ const Routes = createAppContainer(
     Police: createStackNavigator({
       Police: {
         screen: Police
+      },
+      Mapa: {
+        screen: MapaPolice
       }
     }),
     User: createStackNavigator({
       User: {
         screen: User
+      },
+      Mapa: {
+        screen: MapaUser
       }
     })
   })

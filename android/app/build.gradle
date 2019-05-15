@@ -139,6 +139,10 @@ android {
 }
 
 dependencies {
+    implementation (project(':react-native-geolocation-service')){
+        exclude group: "com.google.android.gms", module:"play-services-location"
+    }
+    implementation "com.google.android.gms:play-services-location:11.0.0"
     implementation project(':react-native-vector-icons')
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-gesture-handler')

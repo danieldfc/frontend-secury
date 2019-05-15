@@ -93,20 +93,23 @@ export default class App extends Component {
 
     if (!hasLocationPermission) return;
 
-    Geolocation.getCurrentPosition(
-      position => {
-        this.setState({ location: position, loading: false });
-      },
-      error => {
-        this.setState({ location: error, loading: false });
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 10000,
-        distanceFilter: 50
-      }
-    );
+    this.setState({ loading: true }, () => {
+      Geolocation.getCurrentPosition(
+        position => {
+          this.setState({ location: position, loading: false });
+        },
+        error => {
+          this.setState({ location: error, loading: false });
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 10000,
+          distanceFilter: 50
+        }
+      );
+    });
+
     const token = await AsyncStorage.getItem("@Security:token");
     const user = JSON.parse(await AsyncStorage.getItem("@Security:user"));
 
@@ -115,7 +118,6 @@ export default class App extends Component {
         loggedInUser: user,
         email: user.email,
         password: user.password,
-        location: user.location,
         occurrence: user.occurrence
       });
   }

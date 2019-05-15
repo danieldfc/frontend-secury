@@ -81,9 +81,10 @@ export default class App extends Component {
   loginPolice = async () => {
     try {
       console.log(this.state.loggedInUser);
-      const response = await api.post("/auth/authenticate/user", {
+      const response = await api.post("/auth/authenticate/police", {
         cpf: this.state.cpf,
-        email: this.state.email
+        email: this.state.email,
+        password: this.state.password
       });
 
       console.log(response);
@@ -107,7 +108,6 @@ export default class App extends Component {
   };
 
   registerPolice = async () => {
-    console.log(this.state.loggedInPolice + " register");
     try {
       const response = await api.post("/auth/register/user", {
         cpf,

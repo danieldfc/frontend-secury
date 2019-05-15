@@ -1,6 +1,7 @@
 import { create } from "apisauce";
 import config from "../config/auth.json";
 import AsyncStorage from "@react-native-community/async-storage";
+import { Alert } from "react-native";
 
 const api = create({
   baseURL: config.baseUrl,
@@ -13,7 +14,6 @@ api.addAsyncRequestTransform(request => async () => {
 });
 
 api.addResponseTransform(response => {
-  console.log("chegou");
   if (!response.ok) throw response;
 });
 

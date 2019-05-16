@@ -1,11 +1,9 @@
 import { create } from "apisauce";
-import config from "../config/auth.json";
+import { baseUrl } from "../config/auth.json";
 import AsyncStorage from "@react-native-community/async-storage";
-import { Alert } from "react-native";
 
 const api = create({
-  baseURL: config.baseUrl,
-  timeout: 2000
+  baseURL: baseUrl
 });
 
 api.addAsyncRequestTransform(request => async () => {

@@ -19,9 +19,21 @@ export default class App extends Component {
 
     const optionState = await AsyncStorage.getItem("@Security:Option", option);
 
-    if (optionState === "Police") this.props.navigation.navigate("Police");
+    if (optionState === "Police") {
+      const police = await AsyncStorage.getItem("@Security:police");
+      if (police) {
+        this.props.navigation.navigate("MapaP");
+      }
+      this.props.navigation.navigate("Police");
+    }
 
-    if (optionState === "User") this.props.navigation.navigate("User");
+    if (optionState === "User") {
+      const user = await AsyncStorage.getItem("@Security:user");
+      if (user) {
+        this.props.navigation.navigate("MapaU");
+      }
+      this.props.navigation.navigate("User");
+    }
   }
 
   handlerPolice = async () => {

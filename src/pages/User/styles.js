@@ -49,6 +49,6 @@ export const Email = styled.Text`
   color: #fff;
   font-family: sans-serif;
   font-weight: bold;
-  margin: 35px 0 10px 35px;
+  margin: 35px 0 10px 0px;
   opacity: 0.5;
 `;

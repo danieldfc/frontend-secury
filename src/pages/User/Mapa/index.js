@@ -1,7 +1,8 @@
 import React, { Component } from "react";
+
 import { View, Text } from "react-native";
 
-export default class App extends Component {
+export default class Mapa extends Component {
   render() {
     return (
       <View>

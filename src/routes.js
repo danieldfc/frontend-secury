@@ -21,7 +21,7 @@ const Routes = createAppContainer(
       Police: {
         screen: Police
       },
-      Mapa: {
+      MapaP: {
         screen: MapaPolice
       }
     }),
@@ -29,7 +29,7 @@ const Routes = createAppContainer(
       User: {
         screen: User
       },
-      Mapa: {
+      MapaU: {
         screen: MapaUser
       }
     })

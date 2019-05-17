@@ -1,13 +1,12 @@
 import React, { Component } from "react";
-
-import { View, Text } from "react-native";
+import Map from "../../../components/Map";
 
 export default class Mapa extends Component {
+  static navigationOptions = {
+    headerTransparent: true,
+    headerTintColor: "#000"
+  };
   render() {
-    return (
-      <View>
-        <Text>Mapa User</Text>
-      </View>
-    );
+    return <Map />;
   }
 }

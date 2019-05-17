@@ -22,17 +22,19 @@ export default class App extends Component {
     if (optionState === "Police") {
       const police = await AsyncStorage.getItem("@Security:police");
       if (police) {
-        this.props.navigation.navigate("MapaP");
+        this.props.navigation.navigate("MapaPolice");
+      } else {
+        this.props.navigation.navigate("Police");
       }
-      this.props.navigation.navigate("Police");
     }
 
     if (optionState === "User") {
       const user = await AsyncStorage.getItem("@Security:user");
       if (user) {
-        this.props.navigation.navigate("MapaU");
+        this.props.navigation.navigate("MapaUser");
+      } else {
+        this.props.navigation.navigate("User");
       }
-      this.props.navigation.navigate("User");
     }
   }
 

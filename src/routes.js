@@ -20,17 +20,21 @@ const Routes = createAppContainer(
     Police: createStackNavigator({
       Police: {
         screen: Police
-      },
-      MapaP: {
-        screen: MapaPolice
       }
     }),
     User: createStackNavigator({
       User: {
         screen: User
-      },
-      MapaU: {
+      }
+    }),
+    MapaUser: createStackNavigator({
+      MapaUser: {
         screen: MapaUser
+      }
+    }),
+    MapaPolice: createStackNavigator({
+      MapaPolice: {
+        screen: MapaPolice
       }
     })
   })

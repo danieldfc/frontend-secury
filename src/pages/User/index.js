@@ -9,10 +9,7 @@ import {
   TouchableOpacity,
   Dimensions,
   TextInput,
-  Text,
-  Platform,
-  ToastAndroid,
-  PermissionsAndroid
+  Text
 } from "react-native";
 import {
   ButtonText,
@@ -86,11 +83,8 @@ export default class App extends Component {
         loggedInUser: user
       });
 
-      Alert.alert("Login success!");
-
-      this.props.navigation.navigate("MapaU");
+      this.props.navigation.navigate("MapaUser");
     } catch (response) {
-      Alert.alert(response.data.error);
       this.setState({ errorMessage: response.data.error });
     }
   };
@@ -118,7 +112,7 @@ export default class App extends Component {
 
       Alert.alert("Register success!");
 
-      this.props.navigation.navigate("MapaU");
+      this.props.navigation.navigate("MapaUser");
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }

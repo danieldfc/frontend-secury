@@ -29,8 +29,24 @@ export default class App extends Component {
   static navigationOptions = {
     title: "Police",
     headerTransparent: true,
-    headerTintColor: "#fff"
+    headerTintColor: "#fff",
+    drawerLabel: "Profile",
+    drawerIcon: ({ tintColor }) => (
+      <Image
+      //source={require('./chats-icon.png')}
+      //style={[styles.icon, {tintColor: tintColor}]}
+      />
+    )
   };
+
+  render() {
+    return (
+      <Button
+        onPress={() => this.props.navigation.navigate("Notifications")}
+        title="Go to notifications"
+      />
+    );
+  }
 
   constructor() {
     super();

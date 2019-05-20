@@ -1,7 +1,8 @@
 import {
   createAppContainer,
   createStackNavigator,
-  createSwitchNavigator
+  createSwitchNavigator,
+  createDrawerNavigator
 } from "react-navigation";
 
 import Home from "./pages/Home";
@@ -9,6 +10,7 @@ import Police from "./pages/Police";
 import User from "./pages/User";
 import MapaUser from "./pages/User/Mapa";
 import MapaPolice from "./pages/Police/Mapa";
+import Drawer from "./components/Drawer";
 
 const Routes = createAppContainer(
   createSwitchNavigator({
@@ -17,15 +19,17 @@ const Routes = createAppContainer(
         screen: Home
       }
     }),
-    Police: createStackNavigator({
+    Police: createDrawerNavigator({
       Police: {
         screen: Police
-      }
+      },
+      Profile: { screen: Drawer }
     }),
-    User: createStackNavigator({
+    User: createDrawerNavigator({
       User: {
         screen: User
-      }
+      },
+      Profile: { screen: Drawer }
     }),
     MapaUser: createStackNavigator({
       MapaUser: {

@@ -1,22 +1,44 @@
-import React, { Component } from "react";
-import { View } from "react-native";
-import MapView from "react-native-maps";
+import React, { Component, Fragment } from "react";
+import { View, Image } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import Search from "../Search";
 import Directions from "../Directions";
+import Details from "../Details";
+import GeoCoder from "react-native-geocoding";
+import { getPixelSize } from "../../utils";
+import markerImage from "../../assets/marker.png";
+import backImage from "../../assets/back.png";
+
+import {
+  Back,
+  LocationBox,
+  LocationText,
+  LocationTimeBox,
+  LocationTimeText,
+  LocationTimeTextSmall
+} from "./styles";
+
+GeoCoder.init("AIzaSyDfF05mQvmEKN863seXSJYEmyFPH_lVCIU");
 
 export default class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
       region: null,
-      destination: null
+      destination: null,
+      duration: null,
+      location: null
     };
   }
 
   async componentDidMount() {
     navigator.geolocation.getCurrentPosition(
-      ({ coords: { latitude, longitude } }) => {
+      async ({ coords: { latitude, longitude } }) => {
+        const response = await GeoCoder.from({ latitude, longitude });
+        const address = response.results[0].formatted_address;
+        const location = address.substring(0, address.indexOf(","));
         this.setState({
+          location,
           region: {
             latitude,
             longitude,
@@ -47,8 +69,12 @@ export default class Map extends Component {
     });
   };
 
+  handleBack = () => {
+    this.setState({ destination: null });
+  };
+
   render() {
-    const { region, destination } = this.state;
+    const { region, destination, duration, location } = this.state;
     return (
       <View style={{ flex: 1 }}>
         <MapView
@@ -59,16 +85,55 @@ export default class Map extends Component {
           ref={el => (this.mapView = el)}
         >
           {destination && (
-            <Directions
-              origin={region}
-              destination={destination}
-              onReady={result => {
-                this.mapView.fitToCoordinates(result.coordinates);
-              }}
-            />
+            <Fragment>
+              <Directions
+                origin={region}
+                destination={destination}
+                onReady={result => {
+                  this.setState({ duration: Math.floor(result.duration) });
+                  this.mapView.fitToCoordinates(result.coordinates, {
+                    edgePadding: {
+                      top: getPixelSize(50),
+                      right: getPixelSize(50),
+                      left: getPixelSize(50),
+                      bottom: getPixelSize(350)
+                    }
+                  });
+                }}
+              />
+              <Marker
+                coordinate={destination}
+                anchor={{ x: 0, y: 0 }}
+                image={markerImage}
+              >
+                <LocationBox>
+                  <LocationText>{destination.title}</LocationText>
+                </LocationBox>
+              </Marker>
+
+              <Marker coordinate={region} anchor={{ x: 0, y: 0 }}>
+                <LocationBox>
+                  <LocationTimeBox>
+                    <LocationTimeText>{duration}</LocationTimeText>
+                    <LocationTimeTextSmall>Min</LocationTimeTextSmall>
+                  </LocationTimeBox>
+                  <LocationText>{location}</LocationText>
+                </LocationBox>
+              </Marker>
+            </Fragment>
           )}
         </MapView>
-        <Search onLocationSelected={this.handleLocationSeleted} />
+
+        {destination ? (
+          <Fragment>
+            <Back onPress={this.handleBack}>
+              <Image source={backImage} />
+            </Back>
+            <Details />
+          </Fragment>
+        ) : (
+          <Search onLocationSelected={this.handleLocationSeleted} />
+        )}
       </View>
     );
   }

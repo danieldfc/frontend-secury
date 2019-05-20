@@ -123,13 +123,13 @@ export default class App extends Component {
       <Container>
         <Image source={logo} />
         <ImageContainer>
-          {!!this.state.loggedInUser !== null ? (
+          {this.state.loggedInUser !== null ? (
             <Title>Login for User</Title>
           ) : (
             <Title>Register for User</Title>
           )}
         </ImageContainer>
-        {!!this.state.errorMessage && (
+        {this.state.errorMessage && (
           <Text style={styles.error}>{this.state.errorMessage}</Text>
         )}
         <InputContainer>
@@ -139,7 +139,7 @@ export default class App extends Component {
             size={28}
             color={"rgba(255,255,255,0.7)"}
           />
-          {!!this.state.loggedInUser !== null ? (
+          {this.state.loggedInUser !== null ? (
             <Email>{this.state.email}</Email>
           ) : (
             <TextInput
@@ -203,7 +203,8 @@ const styles = StyleSheet.create({
   },
   iconMail: {
     position: "absolute",
-    top: 8
+    top: 8,
+    left: 37
   },
   input: {
     width: WIDTH - 55,

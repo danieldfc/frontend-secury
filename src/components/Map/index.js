@@ -1,11 +1,17 @@
 import React, { Component, Fragment } from "react";
-import { View, Image } from "react-native";
+import { View, Image, Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import GeoCoder from "react-native-geocoding";
+import AsyncStorage from "@react-native-community/async-storage";
+
+import api from "../../services/api";
+
 import Search from "../Search";
 import Directions from "../Directions";
 import Details from "../Details";
-import GeoCoder from "react-native-geocoding";
+
 import { getPixelSize } from "../../utils";
+
 import markerImage from "../../assets/marker.png";
 import backImage from "../../assets/back.png";
 
@@ -56,10 +62,16 @@ export default class Map extends Component {
     );
   }
 
-  handleLocationSeleted = (data, { geometry }) => {
-    const {
-      location: { lat: latitude, lng: longitude }
-    } = geometry;
+  handleAddTask = async () => {
+    const user = await AsyncStorage.getItem("@Security:user");
+    const { email, occurrence } = user;
+    const task = await api.post("/task/", {
+      email,
+      occurrence
+    });
+
+    Alert.alert("Occurrence add with success!");
+
     this.setState({
       destination: {
         latitude,
@@ -132,7 +144,7 @@ export default class Map extends Component {
             <Details />
           </Fragment>
         ) : (
-          <Search onLocationSelected={this.handleLocationSeleted} />
+          <Search onLocationSelected={this.handleAddTask} />
         )}
       </View>
     );

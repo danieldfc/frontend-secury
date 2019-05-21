@@ -29,24 +29,8 @@ export default class App extends Component {
   static navigationOptions = {
     title: "Police",
     headerTransparent: true,
-    headerTintColor: "#fff",
-    drawerLabel: "Profile",
-    drawerIcon: ({ tintColor }) => (
-      <Image
-      //source={require('./chats-icon.png')}
-      //style={[styles.icon, {tintColor: tintColor}]}
-      />
-    )
+    headerTintColor: "#fff"
   };
-
-  render() {
-    return (
-      <Button
-        onPress={() => this.props.navigation.navigate("Notifications")}
-        title="Go to notifications"
-      />
-    );
-  }
 
   constructor() {
     super();
@@ -95,21 +79,19 @@ export default class App extends Component {
   };
 
   loginPolice = async () => {
+    const { cpf, email, password } = this.state;
     try {
-      console.log(this.state.loggedInUser);
       const response = await api.post("/auth/authenticate/police", {
-        cpf: this.state.cpf,
-        email: this.state.email,
-        password: this.state.password
+        cpf,
+        email,
+        password
       });
-
-      console.log(response);
 
       const { police, token } = response.data;
 
       await AsyncStorage.multiSet([
         ["@Security:token", token],
-        ["@Security:user", JSON.stringify(police)]
+        ["@Security:police", JSON.stringify(police)]
       ]);
 
       this.setState({
@@ -118,36 +100,35 @@ export default class App extends Component {
 
       Alert.alert("Login com sucesso");
     } catch (response) {
-      console.log(response);
       this.setState({ errorMessage: response.data.error });
     }
   };
 
   registerPolice = async () => {
+    const { cpf, email, password } = this.state;
     try {
-      const response = await api.post("/auth/register/user", {
+      const response = await api.post("/auth/register/police", {
         cpf,
         email,
         password
       });
-      console.log(response);
 
       const { police, token } = response.data;
 
       await AsyncStorage.multiSet([
         ["@Security:token", token],
-        ["@Security:user", JSON.stringify(police)]
+        ["@Security:police", JSON.stringify(police)]
       ]);
 
       this.setState({
         loggedInUser: police,
+        cpf: police.cpf,
         email: police.email,
         password: police.password
       });
 
       Alert.alert("Register success");
     } catch (response) {
-      console.log(response);
       this.setState({ errorMessage: response.data.error });
     }
   };

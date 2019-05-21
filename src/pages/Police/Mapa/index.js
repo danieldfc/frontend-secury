@@ -1,12 +1,11 @@
 import React, { Component } from "react";
-import { View, Text } from "react-native";
+import Map from "../../../components/Map";
 
-export default class App extends Component {
+export default class Mapa extends Component {
+  static navigationOptions = {
+    headerTransparent: true
+  };
   render() {
-    return (
-      <View>
-        <Text>Mapa Police</Text>
-      </View>
-    );
+    return <Map />;
   }
 }

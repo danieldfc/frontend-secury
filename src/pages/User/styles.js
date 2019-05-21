@@ -44,11 +44,16 @@ export const EyeButton = styled.TouchableOpacity`
   right: 37px;
 `;
 
-export const Email = styled.Text`
-  font-size: 20px;
-  color: #fff;
-  font-family: sans-serif;
+export const LoggedIn = styled.TouchableOpacity`
+  top: 20px;
+  justify-content: center;
+  align-items: center;
+  background-color: #096;
+  padding: 10px;
+`;
+
+export const LoggedInText = styled.Text`
+  font-size: 16px;
   font-weight: bold;
-  margin: 35px 0 10px 0px;
-  opacity: 0.5;
+  color: #fff;
 `;

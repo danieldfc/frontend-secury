@@ -1,22 +1,23 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import AsyncStorage from "@react-native-community/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
 import api from "../../services/api";
 import logo from "../../assets/logo.png";
 import {
-  Alert,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
   TextInput,
   Text,
+  Platform,
   KeyboardAvoidingView
 } from "react-native";
 import {
   ButtonText,
   Container,
-  Email,
   EyeButton,
+  LoggedIn,
+  LoggedInText,
   Image,
   ImageContainer,
   InputContainer,
@@ -25,17 +26,17 @@ import {
 
 const { width: WIDTH } = Dimensions.get("window");
 
-export default class App extends Component {
+export default class Police extends Component {
   static navigationOptions = {
     title: "Police",
     headerTransparent: true,
     headerTintColor: "#fff"
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      loggedInUser: null,
+      loggedInPolice: null,
       errorMessage: null,
       cpf: null,
       email: null,
@@ -61,12 +62,15 @@ export default class App extends Component {
     const token = await AsyncStorage.getItem("@Security:token");
     const police = JSON.parse(await AsyncStorage.getItem("@Security:police"));
 
-    if (token && police)
+    if (token && police) {
       this.setState({
         loggedInPolice: police,
         cpf: police.cpf,
-        email: police.email
+        email: police.email,
+        password: police.password
       });
+      this.props.navigation.navigate("MapaPolice");
+    }
   }
 
   showPass = () => {
@@ -98,7 +102,7 @@ export default class App extends Component {
         loggedInUser: police
       });
 
-      Alert.alert("Login com sucesso");
+      this.props.navigation.navigate("MapaPolice");
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }
@@ -121,30 +125,31 @@ export default class App extends Component {
       ]);
 
       this.setState({
-        loggedInUser: police,
+        loggedInPolice: police,
         cpf: police.cpf,
         email: police.email,
         password: police.password
       });
 
-      Alert.alert("Register success");
+      this.props.navigation.navigate("MapaPolice");
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }
   };
   render() {
+    const { loggedInPolice, errorMessage, email } = this.state;
     return (
       <Container>
         <ImageContainer>
           <Image source={logo} />
-          {this.state.loggedInPolice !== null ? (
+          {loggedInPolice !== null ? (
             <Title>Login for Police</Title>
           ) : (
             <Title>Register for Police</Title>
           )}
         </ImageContainer>
         <KeyboardAvoidingView>
-          {this.state.errorMessage !== null ? (
+          {errorMessage !== null ? (
             <Text
               style={{
                 alignItems: "center",
@@ -154,15 +159,32 @@ export default class App extends Component {
                 marginHorizontal: WIDTH - 55
               }}
             >
-              {this.state.errorMessage}
+              {errorMessage}
             </Text>
           ) : null}
-          {/* falta cpf */}
+          <Icon
+            style={styles.icon}
+            name="ios-key"
+            size={28}
+            color={"rgba(255,255,255,0.7)"}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="CPF"
+            placeholderTextColor={"rgba(255,255,255,0.7)"}
+            autoCapitalize="none"
+            keyboardType={Platform.select({
+              ios: "numbers-and-punctuation",
+              android: "numeric"
+            })}
+            autoCorrect={false}
+            onChangeText={cpf => this.setState({ cpf })}
+          />
           <InputContainer>
-            {this.state.loggedInPolice !== null ? (
+            {loggedInPolice !== null && email ? (
               <Icon
                 style={styles.icon}
-                name="ios-mail"
+                name="ios-at"
                 size={28}
                 color={"rgba(255,255,255,0.7)"}
               />
@@ -174,20 +196,14 @@ export default class App extends Component {
                 color={"rgba(255,255,255,0.7)"}
               />
             )}
-
-            {this.state.loggedInPolice !== null ? (
-              <Email>{this.state.loggedInPolice.email}</Email>
-            ) : (
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor={"rgba(255,255,255,0.7)"}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                autoCorrect={false}
-                onChangeText={email => this.setState({ email })}
-              />
-            )}
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor={"rgba(255,255,255,0.7)"}
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={email => this.setState({ email })}
+            />
           </InputContainer>
 
           <InputContainer>
@@ -220,14 +236,29 @@ export default class App extends Component {
           </View>;
         })} */}
         </KeyboardAvoidingView>
-        {this.state.loggedInPolice !== null ? (
-          <TouchableOpacity style={styles.button} onPress={this.loginPolice}>
-            <ButtonText>Login</ButtonText>
-          </TouchableOpacity>
+        {loggedInPolice !== null ? (
+          <Fragment>
+            <TouchableOpacity style={styles.button} onPress={this.loginPolice}>
+              <ButtonText>Login</ButtonText>
+            </TouchableOpacity>
+            <LoggedIn onPress={() => this.setState({ loggedInPolice: null })}>
+              <LoggedInText>Não possui login?</LoggedInText>
+            </LoggedIn>
+          </Fragment>
         ) : (
-          <TouchableOpacity style={styles.button} onPress={this.registerPolice}>
-            <ButtonText>Register</ButtonText>
-          </TouchableOpacity>
+          <Fragment>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={this.registerPolice}
+            >
+              <ButtonText>Register</ButtonText>
+            </TouchableOpacity>
+            <LoggedIn
+              onPress={() => this.setState({ loggedInPolice: "police" })}
+            >
+              <LoggedInText>Já possui login?</LoggedInText>
+            </LoggedIn>
+          </Fragment>
         )}
       </Container>
     );

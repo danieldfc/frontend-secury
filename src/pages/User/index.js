@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import AsyncStorage from "@react-native-community/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
 import api from "../../services/api";
@@ -14,19 +14,18 @@ import {
 import {
   ButtonText,
   Container,
-  Email,
   EyeButton,
   Image,
   ImageContainer,
   InputContainer,
+  LoggedIn,
+  LoggedInText,
   Title
 } from "./styles";
 
 const { width: WIDTH } = Dimensions.get("window");
 
-export default class App extends Component {
-  watchId = null;
-
+export default class User extends Component {
   static navigationOptions = {
     title: "User",
     headerTransparent: true,
@@ -52,6 +51,7 @@ export default class App extends Component {
         email: user.email,
         password: user.password
       });
+      this.props.navigation.navigate("MapaUser");
     }
   }
 
@@ -119,19 +119,18 @@ export default class App extends Component {
   };
 
   render() {
+    const { email, loggedInUser, errorMessage, press } = this.state;
     return (
       <Container>
         <Image source={logo} />
         <ImageContainer>
-          {this.state.loggedInUser !== null ? (
+          {loggedInUser !== null ? (
             <Title>Login for User</Title>
           ) : (
             <Title>Register for User</Title>
           )}
         </ImageContainer>
-        {this.state.errorMessage && (
-          <Text style={styles.error}>{this.state.errorMessage}</Text>
-        )}
+        {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
         <InputContainer>
           <Icon
             style={styles.iconMail}
@@ -139,18 +138,14 @@ export default class App extends Component {
             size={28}
             color={"rgba(255,255,255,0.7)"}
           />
-          {this.state.loggedInUser !== null ? (
-            <Email>{this.state.email}</Email>
-          ) : (
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor={"rgba(255,255,255,0.7)"}
-              autoCapitalize="none"
-              autoCorrect={false}
-              onChangeText={email => this.setState({ email })}
-            />
-          )}
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor={"rgba(255,255,255,0.7)"}
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={email => this.setState({ email })}
+          />
         </InputContainer>
 
         <InputContainer>
@@ -169,7 +164,7 @@ export default class App extends Component {
           />
           <EyeButton onPress={this.showPass.bind(this)}>
             <Icon
-              name={this.state.press === false ? "ios-eye-off" : "ios-eye"}
+              name={press === false ? "ios-eye-off" : "ios-eye"}
               size={26}
               color={"rgba(255,255,255,0.7)"}
             />
@@ -182,14 +177,24 @@ export default class App extends Component {
             </View>;
           }) */}
 
-        {this.state.loggedInUser !== null ? (
-          <TouchableOpacity style={styles.button} onPress={this.loginUser}>
-            <ButtonText>Login</ButtonText>
-          </TouchableOpacity>
+        {loggedInUser !== null ? (
+          <Fragment>
+            <TouchableOpacity style={styles.button} onPress={this.loginUser}>
+              <ButtonText>Login</ButtonText>
+            </TouchableOpacity>
+            <LoggedIn onPress={() => this.setState({ loggedInUser: null })}>
+              <LoggedInText>Não possui login?</LoggedInText>
+            </LoggedIn>
+          </Fragment>
         ) : (
-          <TouchableOpacity style={styles.button} onPress={this.registerUser}>
-            <ButtonText>Register</ButtonText>
-          </TouchableOpacity>
+          <Fragment>
+            <TouchableOpacity style={styles.button} onPress={this.registerUser}>
+              <ButtonText>Register</ButtonText>
+            </TouchableOpacity>
+            <LoggedIn onPress={() => this.setState({ loggedInUser: "user" })}>
+              <LoggedInText>Já possui login?</LoggedInText>
+            </LoggedIn>
+          </Fragment>
         )}
       </Container>
     );
@@ -229,7 +234,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     color: "rgba(255,0,0,0.5)",
-    fontWeight: "bold",
-    marginHorizontal: WIDTH - 55
+    fontWeight: "bold"
   }
 });

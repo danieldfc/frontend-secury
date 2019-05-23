@@ -1,20 +1,67 @@
 import styled from "styled-components/native";
+import { Animated } from "react-native";
 
 export const Container = styled.View`
   flex: 1;
-  background: #059;
   justify-content: center;
+  background: #059;
+`;
+
+export const Content = styled.View`
+  flex: 1;
+  padding: 0;
+  margin: 0;
+  top: 0;
+  bottom: 0;
+  background: #aaa;
+  z-index: 5;
+`;
+
+export const Card = styled(Animated.View)`
+  flex: 1;
+  background: #fff;
+  border-radius: 4px;
+  margin: 90px 20px 0;
+  max-height: 400px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+`;
+
+export const CardHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
+  padding: 30px;
+`;
+export const CardContent = styled.View`
+  flex: 1;
+  padding: 0 30px;
+  justify-content: center;
 `;
 
 export const Title = styled.Text`
-  font-size: 20px;
-  color: #fff;
-  font-family: sans-serif;
-  font-weight: bold;
-  margin-bottom: 50px;
-  margin-top: 10px;
-  opacity: 0.5;
+  font-size: 13px;
+  color: #999;
+`;
+
+export const Description = styled.Text`
+  font-size: 32px;
+  margin-top: 3px;
+  color: #333;
+  justify-content: center;
+`;
+
+export const Button = styled.TouchableOpacity`
+  background-color: #c54f3d;
+  height: 54px;
+  margin-horizontal: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px 0 20px;
+  margin: 0;
 `;
 
 export const ButtonText = styled.Text`
@@ -24,36 +71,13 @@ export const ButtonText = styled.Text`
   font-weight: bold;
 `;
 
-export const ImageContainer = styled.View`
-  align-items: center;
-  justify-content: center;
+export const CardFooter = styled.View`
+  padding: 30px;
+  background: #eee;
+  border-radius: 4px;
 `;
 
-export const Image = styled.Image`
-  width: 120px;
-  height: 120px;
-`;
-
-export const InputContainer = styled.View`
-  margin-top: 10px;
-`;
-
-export const EyeButton = styled.TouchableOpacity`
-  position: absolute;
-  top: 10px;
-  right: 37px;
-`;
-
-export const LoggedIn = styled.TouchableOpacity`
-  top: 20px;
-  justify-content: center;
-  align-items: center;
-  background-color: #096;
-  padding: 10px;
-`;
-
-export const LoggedInText = styled.Text`
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
+export const Annotation = styled.Text`
+  font-size: 12px;
+  color: #333;
 `;

@@ -6,9 +6,8 @@ import AsyncStorage from "@react-native-community/async-storage";
 
 import api from "../../services/api";
 
-import Search from "../Search";
 import Directions from "../Directions";
-import Details from "../Details";
+//import Details from "../Details";
 
 import { getPixelSize } from "../../utils";
 
@@ -136,7 +135,7 @@ export default class Map extends Component {
           )}
         </MapView>
 
-        {destination ? (
+        {/* {destination ? (
           <Fragment>
             <Back onPress={this.handleBack}>
               <Image source={backImage} />
@@ -145,7 +144,7 @@ export default class Map extends Component {
           </Fragment>
         ) : (
           <Search onLocationSelected={this.handleAddTask} />
-        )}
+        )} */}
       </View>
     );
   }

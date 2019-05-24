@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Map from "../../components/Map";
-import { Animated } from "react-native";
+import { Animated, Text } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -21,7 +21,8 @@ import {
 
 export default class Mapa extends Component {
   static navigationOptions = {
-    headerTransparent: true
+    headerTransparent: true,
+    headerHintColor: "#000"
   };
 
   render() {
@@ -41,7 +42,7 @@ export default class Mapa extends Component {
       }
     );
 
-    function onHandlerStateChange(event) {
+    onHandlerStateChange = async event => {
       if (event.nativeEvent.oldState === State.ACTIVE) {
         const { translationY } = event.nativeEvent;
 
@@ -50,9 +51,9 @@ export default class Mapa extends Component {
         if (translationY >= 100) {
           opened = true;
         } else {
+          offset = 0;
           translateY.setValue(offset);
           translateY.setOffset(0);
-          offset = 0;
         }
 
         Animated.timing(translateY, {
@@ -65,12 +66,12 @@ export default class Mapa extends Component {
           translateY.setValue(0);
         });
       }
-    }
+    };
 
     return (
       <Container>
         <Content>
-          <Map />
+          <Map translateY={translateY} />
           <PanGestureHandler
             onGestureEvent={animatedEvent}
             onHandlerStateChange={onHandlerStateChange}
@@ -93,7 +94,9 @@ export default class Mapa extends Component {
                 <Icon name="visibility-off" size={28} color="#666" />
               </CardHeader>
               <CardContent>
-                <Title>User</Title>
+                <Title>
+                  User {opened ? <Text>{opened}</Text> : <Text>No</Text>}
+                </Title>
                 <Description>Descrição</Description>
               </CardContent>
               <CardFooter>

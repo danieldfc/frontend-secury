@@ -1,5 +1,10 @@
 import styled, { css } from "styled-components/native";
-import { Platform } from "react-native";
+import { Platform, Animated } from "react-native";
+
+export const Container = styled(Animated.View)`
+  flex: 1;
+  background: #059;
+`;
 
 export const LocationBox = styled.View`
   background: #fff;

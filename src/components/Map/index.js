@@ -1,5 +1,5 @@
-import React, { Component, Fragment } from "react";
-import { View, Image, Alert } from "react-native";
+import React, { Fragment } from "react";
+import { Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import GeoCoder from "react-native-geocoding";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -16,6 +16,7 @@ import backImage from "../../assets/back.png";
 
 import {
   Back,
+  Container,
   LocationBox,
   LocationText,
   LocationTimeBox,
@@ -25,18 +26,14 @@ import {
 
 GeoCoder.init("AIzaSyDfF05mQvmEKN863seXSJYEmyFPH_lVCIU");
 
-export default class Map extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      region: null,
-      destination: null,
-      duration: null,
-      location: null
-    };
-  }
-
-  async componentDidMount() {
+export default function Map({ translateY }) {
+  state = {
+    region: null,
+    destination: null,
+    duration: null,
+    location: null
+  };
+  async function componentDidMount() {
     navigator.geolocation.getCurrentPosition(
       async ({ coords: { latitude, longitude } }) => {
         const response = await GeoCoder.from({ latitude, longitude });
@@ -64,7 +61,7 @@ export default class Map extends Component {
   handleAddTask = async () => {
     const user = await AsyncStorage.getItem("@Security:user");
     const { email, occurrence } = user;
-    const task = await api.post("/task/", {
+    await api.post("/task/", {
       email,
       occurrence
     });
@@ -83,59 +80,65 @@ export default class Map extends Component {
   handleBack = () => {
     this.setState({ destination: null });
   };
+  const { region, destination, duration, location } = this.state;
+  return (
+    <Container
+      style={{
+        opacity: translateY.interpolate({
+          inputRange: [0, 380],
+          outputRange: [0, 1],
+          extrapolate: "clamp"
+        })
+      }}
+    >
+      <MapView
+        style={{ flex: 1 }}
+        region={region}
+        showsUserLocation
+        loadingEnabled
+        ref={el => (this.mapView = el)}
+      >
+        {destination && (
+          <Fragment>
+            <Directions
+              origin={region}
+              destination={destination}
+              onReady={result => {
+                this.setState({ duration: Math.floor(result.duration) });
+                this.mapView.fitToCoordinates(result.coordinates, {
+                  edgePadding: {
+                    top: getPixelSize(50),
+                    right: getPixelSize(50),
+                    left: getPixelSize(50),
+                    bottom: getPixelSize(350)
+                  }
+                });
+              }}
+            />
+            <Marker
+              coordinate={destination}
+              anchor={{ x: 0, y: 0 }}
+              image={markerImage}
+            >
+              <LocationBox>
+                <LocationText>{destination.title}</LocationText>
+              </LocationBox>
+            </Marker>
 
-  render() {
-    const { region, destination, duration, location } = this.state;
-    return (
-      <View style={{ flex: 1 }}>
-        <MapView
-          style={{ flex: 1 }}
-          region={region}
-          showsUserLocation
-          loadingEnabled
-          ref={el => (this.mapView = el)}
-        >
-          {destination && (
-            <Fragment>
-              <Directions
-                origin={region}
-                destination={destination}
-                onReady={result => {
-                  this.setState({ duration: Math.floor(result.duration) });
-                  this.mapView.fitToCoordinates(result.coordinates, {
-                    edgePadding: {
-                      top: getPixelSize(50),
-                      right: getPixelSize(50),
-                      left: getPixelSize(50),
-                      bottom: getPixelSize(350)
-                    }
-                  });
-                }}
-              />
-              <Marker
-                coordinate={destination}
-                anchor={{ x: 0, y: 0 }}
-                image={markerImage}
-              >
-                <LocationBox>
-                  <LocationText>{destination.title}</LocationText>
-                </LocationBox>
-              </Marker>
+            <Marker coordinate={region} anchor={{ x: 0, y: 0 }}>
+              <LocationBox>
+                <LocationTimeBox>
+                  <LocationTimeText>{duration}</LocationTimeText>
+                  <LocationTimeTextSmall>Min</LocationTimeTextSmall>
+                </LocationTimeBox>
+                <LocationText>{location}</LocationText>
+              </LocationBox>
+            </Marker>
+          </Fragment>
+        )}
+      </MapView>
 
-              <Marker coordinate={region} anchor={{ x: 0, y: 0 }}>
-                <LocationBox>
-                  <LocationTimeBox>
-                    <LocationTimeText>{duration}</LocationTimeText>
-                    <LocationTimeTextSmall>Min</LocationTimeTextSmall>
-                  </LocationTimeBox>
-                  <LocationText>{location}</LocationText>
-                </LocationBox>
-              </Marker>
-            </Fragment>
-          )}
-        </MapView>
-
-        {/* {destination ? (
+      {/* {destination ? (
           <Fragment>
             <Back onPress={this.handleBack}>
               <Image source={backImage} />
@@ -145,7 +148,6 @@ export default class Map extends Component {
         ) : (
           <Search onLocationSelected={this.handleAddTask} />
         )} */}
-      </View>
-    );
-  }
+    </Container>
+  );
 }

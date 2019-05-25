@@ -47,11 +47,14 @@ export const Title = styled.Text`
   color: #999;
 `;
 
-export const Description = styled.Text`
-  font-size: 32px;
+export const Description = styled.TextInput`
+  font-size: 18px;
   margin-top: 3px;
   color: #333;
   justify-content: center;
+  border: 1px solid #059;
+  border-radius: 20px;
+  elevation: 1;
 `;
 
 export const Button = styled.TouchableOpacity`

@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import Map from "../../components/Map";
-import { Animated, Text } from "react-native";
+import { Animated } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 
 import Icon from "react-native-vector-icons/MaterialIcons";
+
+import Map from "../../components/Map";
+import api from "../../services/api";
 
 import {
   Annotation,
@@ -20,14 +22,23 @@ import {
 } from "./styles";
 
 export default class Mapa extends Component {
-  static navigationOptions = {
-    headerTransparent: true,
-    headerHintColor: "#000"
+  state = {
+    email: null
+  };
+
+  // componentDidMount() {
+  //   const email = this.props.navigation.getParam("email", "Anônimo");
+  //   alert(JSON.stringify(email));
+
+  //   this.setState({ email });
+  // }
+
+  handlerRegisterTask = async () => {
+    const tast = await api.post("/task/", {});
   };
 
   render() {
     let offset = 0;
-    let opened = false;
     const translateY = new Animated.Value(0);
     const animatedEvent = Animated.event(
       [
@@ -41,9 +52,9 @@ export default class Mapa extends Component {
         useNativeDriver: true
       }
     );
-
-    onHandlerStateChange = async event => {
+    onHandlerStateChange = event => {
       if (event.nativeEvent.oldState === State.ACTIVE) {
+        var opened = false;
         const { translationY } = event.nativeEvent;
 
         offset += translationY;
@@ -51,9 +62,9 @@ export default class Mapa extends Component {
         if (translationY >= 100) {
           opened = true;
         } else {
-          offset = 0;
           translateY.setValue(offset);
           translateY.setOffset(0);
+          offset = 0;
         }
 
         Animated.timing(translateY, {
@@ -67,7 +78,6 @@ export default class Mapa extends Component {
         });
       }
     };
-
     return (
       <Container>
         <Content>
@@ -94,13 +104,18 @@ export default class Mapa extends Component {
                 <Icon name="visibility-off" size={28} color="#666" />
               </CardHeader>
               <CardContent>
-                <Title>
-                  User {opened ? <Text>{opened}</Text> : <Text>No</Text>}
-                </Title>
-                <Description>Descrição</Description>
+                {/* {this.state.email.user.email && (
+                  <Title>{this.state.email.user.email}</Title>
+                )} */}
+                <Description
+                  placeholder="Descrição"
+                  placeholderTextColor="#ccc"
+                  autoCapitalize="none"
+                  defaultValue="Help me."
+                />
               </CardContent>
               <CardFooter>
-                <Button onPress={() => {}}>
+                <Button onPress={this.handlerRegisterTask}>
                   <ButtonText>Solicitar</ButtonText>
                 </Button>
                 <Annotation>Essa é a seção de criação de ocorrência</Annotation>

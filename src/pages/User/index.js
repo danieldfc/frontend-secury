@@ -49,9 +49,10 @@ export default class User extends Component {
       this.setState({
         loggedInUser: user,
         email: user.email,
-        password: user.password
+        password
       });
-      this.props.navigation.navigate("MapaUser");
+      alert(user.email);
+      //this.props.navigation.navigate("MapaUser", { user: user.email });
     }
   }
 
@@ -83,7 +84,7 @@ export default class User extends Component {
         loggedInUser: user
       });
 
-      this.props.navigation.navigate("MapaUser");
+      this.props.navigation.navigate("MapaUser", { email: email });
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }
@@ -110,9 +111,7 @@ export default class User extends Component {
         password: user.password
       });
 
-      Alert.alert("Register success!");
-
-      this.props.navigation.navigate("MapaUser");
+      this.props.navigation.navigate("MapaUser", { email: email });
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }

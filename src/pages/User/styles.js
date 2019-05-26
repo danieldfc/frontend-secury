@@ -3,8 +3,9 @@ import { Animated } from "react-native";
 
 export const Container = styled.View`
   flex: 1;
-  justify-content: center;
   background: #059;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const Content = styled.View`
@@ -15,6 +16,40 @@ export const Content = styled.View`
   bottom: 0;
   background: #aaa;
   z-index: 5;
+`;
+
+export const LoggedIn = styled.TouchableOpacity`
+  top: 20px;
+  justify-content: center;
+  align-items: center;
+  background-color: #096;
+  padding: 10px;
+`;
+
+export const LoggedInText = styled.Text`
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+`;
+
+export const ImageContainer = styled.View`
+  align-items: center;
+  margin-bottom: 50px;
+`;
+
+export const Image = styled.Image`
+  width: 120px;
+  height: 120px;
+`;
+
+export const InputContainer = styled.View`
+  margin-top: 10px;
+`;
+
+export const EyeButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 10px;
+  right: 37px;
 `;
 
 export const Card = styled(Animated.View)`
@@ -43,8 +78,9 @@ export const CardContent = styled.View`
 `;
 
 export const Title = styled.Text`
-  font-size: 13px;
-  color: #999;
+  font-size: 18px;
+  color: #fff;
+  font-weight: bold;
 `;
 
 export const Description = styled.TextInput`

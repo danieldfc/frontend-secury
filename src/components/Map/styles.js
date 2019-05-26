@@ -3,7 +3,6 @@ import { Platform, Animated } from "react-native";
 
 export const Container = styled(Animated.View)`
   flex: 1;
-  background: #059;
 `;
 
 export const LocationBox = styled.View`

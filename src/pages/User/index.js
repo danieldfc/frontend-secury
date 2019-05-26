@@ -1,10 +1,9 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import AsyncStorage from "@react-native-community/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
 import api from "../../services/api";
 import logo from "../../assets/logo.png";
 import {
-  Alert,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
@@ -14,13 +13,13 @@ import {
 import {
   ButtonText,
   Container,
-  EyeButton,
+  Title,
+  LoggedIn,
+  LoggedInText,
   Image,
   ImageContainer,
   InputContainer,
-  LoggedIn,
-  LoggedInText,
-  Title
+  EyeButton
 } from "./styles";
 
 const { width: WIDTH } = Dimensions.get("window");
@@ -33,12 +32,12 @@ export default class User extends Component {
   };
 
   state = {
+    showPass: true,
+    press: false,
     loggedInUser: null,
     errorMessage: null,
     email: null,
-    password: null,
-    showPass: true,
-    press: false
+    password: null
   };
 
   async componentDidMount() {
@@ -48,16 +47,17 @@ export default class User extends Component {
     if (token && user) {
       this.setState({
         loggedInUser: user,
-        email: user.email,
-        password
+        email: user.email
       });
-      alert(user.email);
-      //this.props.navigation.navigate("MapaUser", { user: user.email });
+      this.props.navigation.navigate("MapaUser", {
+        email: user.email
+      });
     }
   }
 
   showPass = () => {
     const { press } = this.state;
+
     if (press === false) {
       this.setState({ showPass: false, press: true });
     } else {
@@ -80,11 +80,18 @@ export default class User extends Component {
         ["@Security:user", JSON.stringify(user)]
       ]);
 
+      const parsed = JSON.parse(user);
+
       this.setState({
-        loggedInUser: user
+        loggedInUser: parsed,
+        email: parsed.email,
+        password: parsed.password
       });
 
-      this.props.navigation.navigate("MapaUser", { email: email });
+      this.props.navigation.navigate("MapaUser", {
+        email,
+        password
+      });
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }
@@ -92,6 +99,7 @@ export default class User extends Component {
 
   registerUser = async () => {
     const { email, password } = this.state;
+
     try {
       const response = await api.post("/auth/register/user", {
         email,
@@ -105,20 +113,23 @@ export default class User extends Component {
         ["@Security:user", JSON.stringify(user)]
       ]);
 
+      const parsed = JSON.parse(user);
+
       this.setState({
-        loggedInUser: user,
-        email: user.email,
-        password: user.password
+        loggedInUser: parse,
+        email: parsed.email,
+        password: parsed.password
       });
 
-      this.props.navigation.navigate("MapaUser", { email: email });
+      this.props.navigation.navigate("MapaUser");
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }
   };
 
   render() {
-    const { email, loggedInUser, errorMessage, press } = this.state;
+    const { loggedInUser, errorMessage, press } = this.state;
+
     return (
       <Container>
         <Image source={logo} />
@@ -170,30 +181,30 @@ export default class User extends Component {
           </EyeButton>
         </InputContainer>
         {/* {this.state.projects.map(project => {
-            <View key={project._id} style={{ marginTop: 15 }}>
-              <Text style={{ fontWeight: "bold" }}>{project.title}</Text>
-              <Text>{project.description}</Text>
-            </View>;
-          }) */}
+          <View key={project._id} style={{ marginTop: 15 }}>
+            <Text style={{ fontWeight: "bold" }}>{project.title}</Text>
+            <Text>{project.description}</Text>
+          </View>;
+        })} */}
 
         {loggedInUser !== null ? (
-          <Fragment>
+          <>
             <TouchableOpacity style={styles.button} onPress={this.loginUser}>
               <ButtonText>Login</ButtonText>
             </TouchableOpacity>
             <LoggedIn onPress={() => this.setState({ loggedInUser: null })}>
               <LoggedInText>Não possui login?</LoggedInText>
             </LoggedIn>
-          </Fragment>
+          </>
         ) : (
-          <Fragment>
+          <>
             <TouchableOpacity style={styles.button} onPress={this.registerUser}>
               <ButtonText>Register</ButtonText>
             </TouchableOpacity>
             <LoggedIn onPress={() => this.setState({ loggedInUser: "user" })}>
               <LoggedInText>Já possui login?</LoggedInText>
             </LoggedIn>
-          </Fragment>
+          </>
         )}
       </Container>
     );

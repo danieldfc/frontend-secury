@@ -22,8 +22,10 @@ export default class App extends Component {
     if (optionState === "Police") {
       const police = await AsyncStorage.getItem("@Security:police");
       if (police) {
+        const parsed = JSON.parse(police);
+        const { email } = parsed;
         this.props.navigation.navigate("MapaPolice", {
-          //email: JSON.stringify(police.email)
+          email
         });
       } else {
         this.props.navigation.navigate("Police");
@@ -32,7 +34,8 @@ export default class App extends Component {
 
     if (optionState === "User") {
       const user = await AsyncStorage.getItem("@Security:user");
-      if (user) {
+      const parsed = JSON.parse(user);
+      if (parsed) {
         this.props.navigation.navigate("MapaUser");
       } else {
         this.props.navigation.navigate("User");

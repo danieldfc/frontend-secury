@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { Animated } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
-
 import Icon from "react-native-vector-icons/MaterialIcons";
-
+import AsyncStorage from "@react-native-community/async-storage";
 import Map from "../../components/Map";
 import api from "../../services/api";
 
@@ -18,20 +17,47 @@ import {
   Container,
   Content,
   Description,
+  EyeButton,
+  Image,
+  ImageContainer,
+  InputContainer,
+  LoggedIn,
+  LoggedInText,
   Title
 } from "./styles";
 
-export default class Mapa extends Component {
+const tabBarIcon = name => ({ tintColor }) => {
+  <Icon
+    style={{ backgroundColor: "transparent" }}
+    name={name}
+    color={tintColor}
+    size={24}
+  />;
+};
+
+export default class MapaUser extends Component {
+  static navigationOptions = {
+    title: "Mapa",
+    headerTransparent: true,
+    headerTintColor: "#fff",
+    barStyle: {
+      backgroundColor: "#059",
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderStyle: "solid",
+      borderColor: "#d0cfd0",
+      tabBarIcon: tabBarIcon("map")
+    }
+  };
   state = {
     email: null
   };
 
-  // componentDidMount() {
-  //   const email = this.props.navigation.getParam("email", "Anônimo");
-  //   alert(JSON.stringify(email));
+  async componentDidMount() {
+    const user = await AsyncStorage.getItem("@Security:user");
+    const parsed = JSON.parse(user);
 
-  //   this.setState({ email });
-  // }
+    this.setState({ email: parsed.email });
+  }
 
   handlerRegisterTask = async () => {
     const tast = await api.post("/task/", {});
@@ -54,7 +80,7 @@ export default class Mapa extends Component {
     );
     onHandlerStateChange = event => {
       if (event.nativeEvent.oldState === State.ACTIVE) {
-        var opened = false;
+        let opened = false;
         const { translationY } = event.nativeEvent;
 
         offset += translationY;
@@ -79,9 +105,9 @@ export default class Mapa extends Component {
       }
     };
     return (
-      <Container>
+      <View>
+        <Map translateY={translateY} />
         <Content>
-          <Map translateY={translateY} />
           <PanGestureHandler
             onGestureEvent={animatedEvent}
             onHandlerStateChange={onHandlerStateChange}
@@ -104,9 +130,7 @@ export default class Mapa extends Component {
                 <Icon name="visibility-off" size={28} color="#666" />
               </CardHeader>
               <CardContent>
-                {/* {this.state.email.user.email && (
-                  <Title>{this.state.email.user.email}</Title>
-                )} */}
+                {this.state.email && <Title>{this.state.email}</Title>}
                 <Description
                   placeholder="Descrição"
                   placeholderTextColor="#ccc"
@@ -123,7 +147,7 @@ export default class Mapa extends Component {
             </Card>
           </PanGestureHandler>
         </Content>
-      </Container>
+      </View>
     );
   }
 }

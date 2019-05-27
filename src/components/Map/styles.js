@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components/native";
-import { Platform, Animated } from "react-native";
+import { Platform } from "react-native";
 
-export const Container = styled(Animated.View)`
+export const Container = styled.View`
   flex: 1;
 `;
 

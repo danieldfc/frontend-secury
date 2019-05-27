@@ -1,30 +1,26 @@
 import React, { Component } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { Animated, StyleSheet, Text } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-community/async-storage";
-import Map from "../../components/Map";
 import api from "../../services/api";
 
 import {
-  Annotation,
   Button,
   ButtonText,
   Card,
   CardContent,
   CardFooter,
   CardHeader,
+  CardHeaderTitle,
   Container,
   Content,
   Description,
-  EyeButton,
-  Image,
-  ImageContainer,
-  InputContainer,
-  LoggedIn,
-  LoggedInText,
-  Title
+  TitleTask,
+  TitleTaskDesc
 } from "./styles";
+
+import Map from "../../components/Map";
 
 const tabBarIcon = name => ({ tintColor }) => {
   <Icon
@@ -49,18 +45,47 @@ export default class MapaUser extends Component {
     }
   };
   state = {
-    email: null
+    email: null,
+    title: null,
+    description: null,
+    occurrence: [],
+    errorMessage: null,
+    destination: null
   };
 
   async componentDidMount() {
     const user = await AsyncStorage.getItem("@Security:user");
     const parsed = JSON.parse(user);
-
     this.setState({ email: parsed.email });
   }
 
   handlerRegisterTask = async () => {
-    const tast = await api.post("/task/", {});
+    try {
+      const { title, description } = this.state;
+      const user = await AsyncStorage.getItem("@Security:user");
+      const parsed = JSON.parse(user);
+      const { email, location } = parsed;
+      alert(JSON.stringify(parsed));
+      // await api.post("/task", {
+      //   email,
+      //   occurrence: [
+      //     {
+      //       title,
+      //       description
+      //     }
+      //   ]
+      // });
+      // alert("Occurrence add with success!");
+      // this.setState({
+      //   destination: {
+      //     latitude,
+      //     longitude,
+      //     title: data.structured_formatting.main_text
+      //   }
+      // });
+    } catch (err) {
+      this.setState({ errorMessage: err });
+    }
   };
 
   render() {
@@ -82,9 +107,7 @@ export default class MapaUser extends Component {
       if (event.nativeEvent.oldState === State.ACTIVE) {
         let opened = false;
         const { translationY } = event.nativeEvent;
-
         offset += translationY;
-
         if (translationY >= 100) {
           opened = true;
         } else {
@@ -92,7 +115,6 @@ export default class MapaUser extends Component {
           translateY.setOffset(0);
           offset = 0;
         }
-
         Animated.timing(translateY, {
           toValue: opened ? 380 : 0,
           duration: 200,
@@ -104,10 +126,11 @@ export default class MapaUser extends Component {
         });
       }
     };
+    const { errorMessage } = this.state;
     return (
-      <View>
-        <Map translateY={translateY} />
+      <Container>
         <Content>
+          <Map translateY={translateY} />
           <PanGestureHandler
             onGestureEvent={animatedEvent}
             onHandlerStateChange={onHandlerStateChange}
@@ -126,28 +149,34 @@ export default class MapaUser extends Component {
               }}
             >
               <CardHeader>
-                <Icon name="attach-money" size={28} color="#666" />
-                <Icon name="visibility-off" size={28} color="#666" />
+                <CardHeaderTitle>Task</CardHeaderTitle>
+                <Icon name="assignment" size={28} color="#666" />
               </CardHeader>
               <CardContent>
-                {this.state.email && <Title>{this.state.email}</Title>}
+                {errorMessage && <Text>{errorMessage}</Text>}
+                <TitleTaskDesc>Coloque seu título</TitleTaskDesc>
+                <TitleTask
+                  placeholder="Title"
+                  placeholderTextColor="#ccc"
+                  onChangeText={title => this.setState({ title })}
+                />
+                <TitleTaskDesc>Coloque sua descrição</TitleTaskDesc>
                 <Description
                   placeholder="Descrição"
                   placeholderTextColor="#ccc"
                   autoCapitalize="none"
-                  defaultValue="Help me."
+                  onChangeText={description => this.setState({ description })}
                 />
               </CardContent>
               <CardFooter>
                 <Button onPress={this.handlerRegisterTask}>
                   <ButtonText>Solicitar</ButtonText>
                 </Button>
-                <Annotation>Essa é a seção de criação de ocorrência</Annotation>
               </CardFooter>
             </Card>
           </PanGestureHandler>
         </Content>
-      </View>
+      </Container>
     );
   }
 }

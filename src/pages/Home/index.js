@@ -21,12 +21,9 @@ export default class App extends Component {
 
     if (optionState === "Police") {
       const police = await AsyncStorage.getItem("@Security:police");
-      if (police) {
-        const parsed = JSON.parse(police);
-        const { email } = parsed;
-        this.props.navigation.navigate("MapaPolice", {
-          email
-        });
+      const parsed = JSON.parse(police);
+      if (parsed) {
+        this.props.navigation.navigate("MapaPolice");
       } else {
         this.props.navigation.navigate("Police");
       }

@@ -1,5 +1,4 @@
-import React, { Fragment } from "react";
-import { Alert, Component } from "react-native";
+import React, { Component } from "react";
 import MapView, { Marker } from "react-native-maps";
 import GeoCoder from "react-native-geocoding";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -7,7 +6,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import api from "../../services/api";
 
 import Directions from "../Directions";
-//import Details from "../Details";
+// import Details from "../Details";
 
 import { getPixelSize } from "../../utils";
 
@@ -15,7 +14,7 @@ import markerImage from "../../assets/marker.png";
 //import backImage from "../../assets/back.png";
 
 import {
-  Back,
+  //  Back,
   Container,
   LocationBox,
   LocationText,
@@ -24,20 +23,19 @@ import {
   LocationTimeTextSmall
 } from "./styles";
 
-GeoCoder.init("AIzaSyDfF05mQvmEKN863seXSJYEmyFPH_lVCIU");
+GeoCoder.init("AIzaSyB0dW7p8Av78L8snUn4MRufW9ptZEANM6M");
 
 export default class Map extends Component {
-  constructor({ translateY }) {
-    super({ translateY });
+  constructor(props) {
+    super(props);
     this.state = {
       region: null,
       destination: null,
       duration: null,
       location: null,
-      translateY
+      errorMessage: null
     };
   }
-
   async componentDidMount() {
     navigator.geolocation.getCurrentPosition(
       async ({ coords: { latitude, longitude } }) => {
@@ -53,8 +51,13 @@ export default class Map extends Component {
             longitudeDelta: 0.0134
           }
         });
+        const { lat, lng } = response.results[0].geometry.location;
+        const location = {lat, lng}
+        await AsyncStorage.setItem("@Security:location", location)
       }, //success
-      () => {}, //error
+      () => {
+        alert("Não foi possível encontrar a sua localização!");
+      }, //error
       {
         timeout: 2000,
         enableHighAccuracy: true,
@@ -63,26 +66,6 @@ export default class Map extends Component {
     );
   }
 
-  handleAddTask = async () => {
-    const user = await AsyncStorage.getItem("@Security:user");
-    const parsed = JSON.parse(user);
-    const { email, occurrence } = parsed;
-    await api.post("/task/", {
-      email,
-      occurrence
-    });
-
-    Alert.alert("Occurrence add with success!");
-
-    this.setState({
-      destination: {
-        latitude,
-        longitude,
-        title: data.structured_formatting.main_text
-      }
-    });
-  };
-
   handleBack = () => {
     this.setState({ destination: null });
   };
@@ -90,15 +73,7 @@ export default class Map extends Component {
   render() {
     const { region, destination, duration, location } = this.state;
     return (
-      <Container
-        style={{
-          opacity: translateY.interpolate({
-            inputRange: [0, 380],
-            outputRange: [0, 1],
-            extrapolate: "clamp"
-          })
-        }}
-      >
+      <Container>
         <MapView
           style={{ flex: 1 }}
           region={region}
@@ -107,7 +82,7 @@ export default class Map extends Component {
           ref={el => (this.mapView = el)}
         >
           {destination && (
-            <Fragment>
+            <>
               <Directions
                 origin={region}
                 destination={destination}
@@ -142,17 +117,17 @@ export default class Map extends Component {
                   <LocationText>{location}</LocationText>
                 </LocationBox>
               </Marker>
-            </Fragment>
+            </>
           )}
         </MapView>
 
         {/* {destination ? (
-          <Fragment>
+          <>
             <Back onPress={this.handleBack}>
               <Image source={backImage} />
             </Back>
             <Details />
-          </Fragment>
+          </>
         ) : (
           <Search onLocationSelected={this.handleAddTask} />
         )} */}

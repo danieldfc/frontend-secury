@@ -37,7 +37,8 @@ export default class User extends Component {
     loggedInUser: null,
     errorMessage: null,
     email: null,
-    password: null
+    password: null,
+    location: null
   };
 
   async componentDidMount() {
@@ -47,11 +48,10 @@ export default class User extends Component {
     if (token && user) {
       this.setState({
         loggedInUser: user,
-        email: user.email
+        email: user.email,
+        location: user.location
       });
-      this.props.navigation.navigate("MapaUser", {
-        email: user.email
-      });
+      this.props.navigation.navigate("MapaUser");
     }
   }
 
@@ -66,11 +66,12 @@ export default class User extends Component {
   };
 
   loginUser = async () => {
-    const { email, password } = this.state;
+    const { email, password, location } = this.state;
     try {
       const response = await api.post("/auth/authenticate/user", {
         email,
-        password
+        password,
+        location
       });
 
       const { user, token } = response.data;
@@ -88,10 +89,7 @@ export default class User extends Component {
         password: parsed.password
       });
 
-      this.props.navigation.navigate("MapaUser", {
-        email,
-        password
-      });
+      this.props.navigation.navigate("MapaUser");
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }

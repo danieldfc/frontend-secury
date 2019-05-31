@@ -51,9 +51,7 @@ export default class Map extends Component {
             longitudeDelta: 0.0134
           }
         });
-        const { lat, lng } = response.results[0].geometry.location;
-        const location = {lat, lng}
-        await AsyncStorage.setItem("@Security:location", location)
+        await AsyncStorage.setItem("@Security:location", location);
       }, //success
       () => {
         alert("Não foi possível encontrar a sua localização!");

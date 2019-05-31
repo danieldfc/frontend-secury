@@ -13,7 +13,7 @@ import {
   CardFooter,
   CardHeader,
   CardHeaderTitle,
-  Container,
+  ContainerMapa,
   Content,
   Description,
   TitleTask,
@@ -66,23 +66,23 @@ export default class MapaUser extends Component {
       const parsed = JSON.parse(user);
       const { email, location } = parsed;
       alert(JSON.stringify(parsed));
-      // await api.post("/task", {
-      //   email,
-      //   occurrence: [
-      //     {
-      //       title,
-      //       description
-      //     }
-      //   ]
-      // });
-      // alert("Occurrence add with success!");
-      // this.setState({
-      //   destination: {
-      //     latitude,
-      //     longitude,
-      //     title: data.structured_formatting.main_text
-      //   }
-      // });
+      await api.post("/task", {
+        email,
+        occurrence: [
+          {
+            title,
+            description
+          }
+        ]
+      });
+      alert("Occurrence add with success!");
+      this.setState({
+        destination: {
+          latitude,
+          longitude,
+          title: data.structured_formatting.main_text
+        }
+      });
     } catch (err) {
       this.setState({ errorMessage: err });
     }
@@ -128,7 +128,7 @@ export default class MapaUser extends Component {
     };
     const { errorMessage } = this.state;
     return (
-      <Container>
+      <ContainerMapa>
         <Content>
           <Map translateY={translateY} />
           <PanGestureHandler
@@ -176,7 +176,7 @@ export default class MapaUser extends Component {
             </Card>
           </PanGestureHandler>
         </Content>
-      </Container>
+      </ContainerMapa>
     );
   }
 }

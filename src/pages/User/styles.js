@@ -64,6 +64,12 @@ export const Container = styled.View`
   flex: 1;
   background: #059;
   justify-content: center;
+  align-items: center;
+`;
+export const ContainerMapa = styled.View`
+  flex: 1;
+  background: #059;
+  justify-content: center;
 `;
 
 export const Content = styled.View`

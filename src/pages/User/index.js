@@ -37,8 +37,7 @@ export default class User extends Component {
     loggedInUser: null,
     errorMessage: null,
     email: null,
-    password: null,
-    location: null
+    password: null
   };
 
   async componentDidMount() {
@@ -48,8 +47,7 @@ export default class User extends Component {
     if (token && user) {
       this.setState({
         loggedInUser: user,
-        email: user.email,
-        location: user.location
+        email: user.email
       });
       this.props.navigation.navigate("MapaUser");
     }
@@ -66,22 +64,21 @@ export default class User extends Component {
   };
 
   loginUser = async () => {
-    const { email, password, location } = this.state;
+    const { email, password } = this.state;
     try {
       const response = await api.post("/auth/authenticate/user", {
         email,
-        password,
-        location
+        password
       });
 
       const { user, token } = response.data;
 
+      const parsed = JSON.stringify(user);
+
       await AsyncStorage.multiSet([
         ["@Security:token", token],
-        ["@Security:user", JSON.stringify(user)]
+        ["@Security:user", parsed]
       ]);
-
-      const parsed = JSON.parse(user);
 
       this.setState({
         loggedInUser: parsed,
@@ -106,18 +103,18 @@ export default class User extends Component {
 
       const { user, token } = response.data;
 
-      await AsyncStorage.multiSet([
-        ["@Security:token", token],
-        ["@Security:user", JSON.stringify(user)]
-      ]);
-
-      const parsed = JSON.parse(user);
+      const parsed = JSON.stringify(user);
 
       this.setState({
-        loggedInUser: parse,
+        loggedInUser: parsed,
         email: parsed.email,
         password: parsed.password
       });
+
+      await AsyncStorage.multiSet([
+        ["@Security:token", token],
+        ["@Security:user", parsed]
+      ]);
 
       this.props.navigation.navigate("MapaUser");
     } catch (response) {
@@ -178,13 +175,6 @@ export default class User extends Component {
             />
           </EyeButton>
         </InputContainer>
-        {/* {this.state.projects.map(project => {
-          <View key={project._id} style={{ marginTop: 15 }}>
-            <Text style={{ fontWeight: "bold" }}>{project.title}</Text>
-            <Text>{project.description}</Text>
-          </View>;
-        })} */}
-
         {loggedInUser !== null ? (
           <>
             <TouchableOpacity style={styles.button} onPress={this.loginUser}>

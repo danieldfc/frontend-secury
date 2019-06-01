@@ -41,21 +41,19 @@ export default class App extends Component {
   }
 
   handlerPolice = async () => {
-    const { option } = this.state;
-
-    this.setState({ option: "Police" });
+    const option = "Police";
 
     await AsyncStorage.setItem("@Security:Option", option);
+    this.setState({ option: "Police" });
 
     this.props.navigation.navigate("Police");
   };
 
   handlerUser = async () => {
-    const { option } = this.state;
-
-    this.setState({ option: "User" });
+    const option = "User";
 
     await AsyncStorage.setItem("@Security:Option", option);
+    this.setState({ option: "User" });
 
     this.props.navigation.navigate("User");
   };

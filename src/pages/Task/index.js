@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import AsyncStorage from "@react-native-community/async-storage";
 import api from "../../services/api";
 
 import {
@@ -34,45 +35,37 @@ export default class Task extends Component {
     }
   };
   state = {
-    errorMessage: null
+    errorMessage: null,
+    tasks: []
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     this.getTaskList();
   }
 
   getTaskList = async () => {
     try {
-      const user = await AsyncStorage.getItem("@Security:user");
-      const response = await api.post("/task/list", {
-        email: user.email
-      });
-      console.log(response.data);
+      const user = JSON.parse(await AsyncStorage.getItem("@Security:user"));
+      const response = await api.post(`/task/list/${user._id}`);
+      const { tasks } = response.data;
+
+      this.setState({ tasks });
     } catch (err) {
+      console.log(err);
       this.setState({ errorMessage: err.data.error });
-      console.log(err.data.error);
     }
   };
 
   render() {
     return (
       <Container>
-        {/**{this.state.projects.map(project => {
-          <View key={project._id} style={{ marginTop: 15 }}>
-            <Text style={{ fontWeight: "bold" }}>{project.title}</Text>
-            <Text>{project.description}</Text>
-          </View>;
-        })} */}
         <Content>
-          <ListItem>
-            <TitleList>Olá</TitleList>
-            <DescriptionList>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque
-              velit deserunt quis placeat veritatis commodi, delectus quidem
-              quibusdam numquam, eaque eligendi molestiae incidunt nostrum enim.
-              Repellendus similique saepe quam culpa?
-            </DescriptionList>
-          </ListItem>
+          {this.state.tasks.map(task => {
+            <ListItem key={task._id}>
+              <TitleList>{task.title}</TitleList>
+              <DescriptionList>{task.description}</DescriptionList>
+            </ListItem>;
+          })}
         </Content>
       </Container>
     );

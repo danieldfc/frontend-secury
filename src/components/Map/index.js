@@ -4,17 +4,16 @@ import GeoCoder from "react-native-geocoding";
 import AsyncStorage from "@react-native-community/async-storage";
 
 import api from "../../services/api";
+import { getPixelSize } from "../../utils";
 
 import Directions from "../Directions";
 // import Details from "../Details";
-
-import { getPixelSize } from "../../utils";
+// import Search from "../Search";
 
 import markerImage from "../../assets/marker.png";
-//import backImage from "../../assets/back.png";
+import { baseUrl } from "../../config/auth.json";
 
 import {
-  //  Back,
   Container,
   LocationBox,
   LocationText,
@@ -31,41 +30,88 @@ export default class Map extends Component {
     this.state = {
       region: null,
       destination: null,
-      duration: null,
       location: null,
-      errorMessage: null
+      duration: null,
+      errorMessage: null,
+      task: {}
     };
   }
+
   async componentDidMount() {
-    navigator.geolocation.getCurrentPosition(
-      async ({ coords: { latitude, longitude } }) => {
-        const response = await GeoCoder.from({ latitude, longitude });
-        const address = response.results[0].formatted_address;
-        const location = address.substring(0, address.indexOf(","));
-        this.setState({
-          location,
-          region: {
-            latitude,
-            longitude,
-            latitudeDelta: 0.0143,
-            longitudeDelta: 0.0134
-          }
-        });
-        await AsyncStorage.setItem("@Security:location", location);
-      }, //success
-      () => {
-        alert("Não foi possível encontrar a sua localização!");
-      }, //error
-      {
-        timeout: 2000,
-        enableHighAccuracy: true,
-        maximumAge: 1000
-      }
-    );
+    const { option } = this.props;
+    if (option === "User") {
+      const user = await AsyncStorage.getItem("@Security:user");
+      const parsed = JSON.parse(user);
+
+      navigator.geolocation.getCurrentPosition(
+        async ({ coords: { latitude, longitude } }) => {
+          const response = await GeoCoder.from({ latitude, longitude });
+          const address = response.results[0].formatted_address;
+          const location = address.substring(0, address.indexOf(","));
+          this.setState({
+            location,
+            region: {
+              latitude,
+              longitude,
+              latitudeDelta: 0.0143,
+              longitudeDelta: 0.0134
+            }
+          });
+          await api.post(`/auth/update/user/${parsed._id}`, {
+            location
+          });
+        }, //success
+        () => {}, //error
+        {
+          timeout: 2000,
+          enableHighAccuracy: true,
+          maximumAge: 1000
+        }
+      );
+    }
+    if (option === "Police") {
+      const police = await AsyncStorage.getItem("@Security:police");
+      const parsed = JSON.parse(police);
+
+      navigator.geolocation.getCurrentPosition(
+        async ({ coords: { latitude, longitude } }) => {
+          const response = await GeoCoder.from({ latitude, longitude });
+          const address = response.results[0].formatted_address;
+          const location = address.substring(0, address.indexOf(","));
+          this.setState({
+            location,
+            region: {
+              latitude,
+              longitude,
+              latitudeDelta: 0.0143,
+              longitudeDelta: 0.0134
+            }
+          });
+          await api.post(`/auth/update/police/${parsed._id}`, {
+            location
+          });
+        }, //success
+        () => {}, //error
+        {
+          timeout: 2000,
+          enableHighAccuracy: true,
+          maximumAge: 1000
+        }
+      );
+    }
   }
 
-  handleBack = () => {
-    this.setState({ destination: null });
+  handleLocationDestination = (data, { geometry }) => {
+    const {
+      location: { lat: latitude, lng: longitude }
+    } = geometry;
+    this.state({
+      destination: {
+        latitude,
+        longitude,
+        title: data.structured_formatting.main_text
+      }
+    });
   };
 
   render() {
@@ -119,16 +165,15 @@ export default class Map extends Component {
           )}
         </MapView>
 
-        {/* {destination ? (
+        {destination ? (
           <>
             <Back onPress={this.handleBack}>
               <Image source={backImage} />
             </Back>
             <Details />
           </>
-        ) : (
-          <Search onLocationSelected={this.handleAddTask} />
-        )} */}
+        ) : // <Search onLocationSelected={this.handleLocationDestination} />
+        null}
       </Container>
     );
   }

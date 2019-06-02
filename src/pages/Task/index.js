@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-community/async-storage";
 import api from "../../services/api";
@@ -7,9 +7,9 @@ import api from "../../services/api";
 import {
   Container,
   Content,
+  DescriptionList,
   ListItem,
-  TitleList,
-  DescriptionList
+  TitleList
 } from "./styles";
 
 const tabBarIcon = name => ({ tintColor }) => {
@@ -48,6 +48,11 @@ export default class Task extends Component {
       const user = JSON.parse(await AsyncStorage.getItem("@Security:user"));
       const response = await api.post(`/task/list/${user._id}`);
       const { tasks } = response.data;
+      console.log(
+        tasks.map(task => {
+          task.title;
+        })
+      );
 
       this.setState({ tasks });
     } catch (err) {
@@ -57,10 +62,11 @@ export default class Task extends Component {
   };
 
   render() {
+    const { tasks } = this.state;
     return (
       <Container>
         <Content>
-          {this.state.tasks.map(task => {
+          {tasks.map(task => {
             <ListItem key={task._id}>
               <TitleList>{task.title}</TitleList>
               <DescriptionList>{task.description}</DescriptionList>

@@ -1,15 +1,18 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-community/async-storage";
 import api from "../../services/api";
 
 import {
+  Completed,
   Container,
   Content,
   DescriptionList,
   ListItem,
-  TitleList
+  TitleList,
+  TitleContent,
+  EmailContent
 } from "./styles";
 
 const tabBarIcon = name => ({ tintColor }) => {
@@ -36,7 +39,8 @@ export default class Task extends Component {
   };
   state = {
     errorMessage: null,
-    tasks: []
+    tasks: [],
+    user: {}
   };
 
   async componentDidMount() {
@@ -48,31 +52,28 @@ export default class Task extends Component {
       const user = JSON.parse(await AsyncStorage.getItem("@Security:user"));
       const response = await api.post(`/task/list/${user._id}`);
       const { tasks } = response.data;
-      console.log(
-        tasks.map(task => {
-          task.title;
-        })
-      );
 
-      this.setState({ tasks });
+      this.setState({ tasks, user });
     } catch (err) {
-      console.log(err);
       this.setState({ errorMessage: err.data.error });
     }
   };
 
   render() {
-    const { tasks } = this.state;
+    const { tasks, user } = this.state;
+    let score = tasks.map((item, index) => {
+      return (
+        <ListItem key={index}>
+          <TitleList>Title: {item.title}</TitleList>
+          <DescriptionList>Description: {item.description}</DescriptionList>
+        </ListItem>
+      );
+    });
     return (
       <Container>
-        <Content>
-          {tasks.map(task => {
-            <ListItem key={task._id}>
-              <TitleList>{task.title}</TitleList>
-              <DescriptionList>{task.description}</DescriptionList>
-            </ListItem>;
-          })}
-        </Content>
+        <TitleContent>Task of user</TitleContent>
+        <EmailContent>Email: {user.email}</EmailContent>
+        <Content>{score}</Content>
       </Container>
     );
   }

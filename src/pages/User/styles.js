@@ -60,11 +60,50 @@ export const CardHeaderTitle = styled.Text`
   color: #666;
 `;
 
-export const Container = styled.View`
+export const ProfileScrollView = styled.ScrollView`
   flex: 1;
-  background: #059;
+`;
+
+export const EmailInput = styled.TextInput`
+  width: 300px;
+  height: 54px;
+  border: 1px solid #059;
+  border-radius: 20px;
+  padding: 15px;
+  font-size: 16px;
+  margin-bottom: 20px;
+`;
+
+export const PasswordInput = styled.TextInput`
+  width: 300px;
+  height: 54px;
+  border: 1px solid #059;
+  border-radius: 20px;
+  padding: 15px;
+  font-size: 16px;
+  margin-bottom: 20px;
+`;
+
+export const ButtonUpdate = styled.TouchableOpacity`
+  width: 300px;
+  border: 1px solid #059;
+  border-radius: 10px;
+  padding: 15px;
   justify-content: center;
   align-items: center;
+`;
+
+export const ButtonUpdateText = styled.Text`
+  color: #059;
+  font-size: 14px;
+`;
+
+export const Container = styled.View`
+  flex: 1;
+  background: #fff;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 `;
 export const ContainerMapa = styled.View`
   flex: 1;
@@ -91,6 +130,7 @@ export const Description = styled.TextInput`
   border-radius: 20px;
   elevation: 1;
   background: #fff;
+  padding: 10px;
 `;
 
 export const EyeButton = styled.TouchableOpacity`
@@ -129,8 +169,9 @@ export const LoggedInText = styled.Text`
 
 export const Title = styled.Text`
   font-size: 18px;
-  color: #fff;
+  color: #059;
   font-weight: bold;
+  margin: 40px 0;
 `;
 
 export const TitleTask = styled.TextInput`

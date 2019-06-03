@@ -180,7 +180,6 @@ export default class MapaUser extends Component {
                 <Description
                   placeholder="Descrição"
                   placeholderTextColor="#ccc"
-                  autoCapitalize="none"
                   onChangeText={description => this.setState({ description })}
                 />
               </CardContent>

@@ -3,10 +3,8 @@ import { Animated, StyleSheet, Text } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-community/async-storage";
-import socket from "socket.io-client";
 
 import api from "../../services/api";
-import { baseUrl } from "../../config/auth.json";
 
 import {
   Button,
@@ -78,18 +76,6 @@ export default class MapaUser extends Component {
             description
           }
         ]
-      });
-      const io = socket(baseUrl);
-
-      io.emit("taskCreate", task);
-
-      io.on(user._id, data => {
-        this.setState({
-          task: {
-            ...this.state.task,
-            occurrence: [data, ...this.state.task.occurrence]
-          }
-        });
       });
       alert("Occurrence add with success!");
       this.setState({

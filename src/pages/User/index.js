@@ -139,7 +139,7 @@ export default class User extends Component {
         <InputContainer>
           <Icon
             style={styles.iconMail}
-            name="ios-mail"
+            name="ios-at"
             size={28}
             color={"rgba(255,255,255,0.7)"}
           />

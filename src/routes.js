@@ -1,14 +1,11 @@
-import {
-  createAppContainer,
-  createSwitchNavigator,
-  createStackNavigator
-} from "react-navigation";
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 
 import Home from "./pages/Home";
 import Police from "./pages/Police";
 import User from "./pages/User";
-import Task from "./pages/Task";
+import TaskPolice from "./pages/Task";
+import TaskUser from "./pages/Task";
 
 import MapaUser from "./pages/User/MapaUser";
 import MapaPolice from "./pages/Police/MapaPolice";
@@ -20,28 +17,24 @@ const Routes = createAppContainer(
   createSwitchNavigator(
     {
       Home,
-      Police: createStackNavigator({
-        Police: {
-          screen: Police
-        }
-      }),
+      Police,
       MapaPolice: createMaterialBottomTabNavigator(
         {
-          ProfilePolice,
-          Task,
-          MapaPolice
+          TaskPolice,
+          MapaPolice,
+          ProfilePolice
         },
         {
           shifting: false,
-          activeColor: "#059",
-          inactiveColor: "#000"
+          activeColor: "#fff",
+          inactiveColor: "#ccc"
         }
       ),
       User,
       MapaUser: createMaterialBottomTabNavigator(
         {
           MapaUser,
-          Task,
+          TaskUser,
           ProfileUser
         },
         {

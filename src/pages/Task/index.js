@@ -5,23 +5,23 @@ import AsyncStorage from "@react-native-community/async-storage";
 import api from "../../services/api";
 
 import {
-  Completed,
-  Container,
-  Content,
-  DescriptionList,
-  ListItem,
-  TitleList,
-  TitleContent,
-  EmailContent,
-  ButtonView,
   ButtonDelete,
   ButtonDeleteText,
   ButtonUpdate,
   ButtonUpdateText,
+  ButtonView,
+  Completed,
+  Container,
+  Content,
+  DescriptionList,
   DescriptionListFound,
+  EmailContent,
   ListFound,
-  TitleListFound,
-  ListText
+  ListItem,
+  ListText,
+  TitleContent,
+  TitleList,
+  TitleListFound
 } from "./styles";
 
 const tabBarIcon = name => ({ tintColor }) => {
@@ -50,6 +50,8 @@ export default class Task extends Component {
     errorMessage: null,
     tasks: [],
     user: {},
+    police: {},
+    option: null,
     editable: false,
     title: null,
     description: null,
@@ -57,18 +59,46 @@ export default class Task extends Component {
   };
 
   async componentDidMount() {
-    this.getTaskList();
-    this._onRefresh();
+    const police = JSON.parse(await AsyncStorage.getItem("@Security:police"));
+    const user = JSON.parse(await AsyncStorage.getItem("@Security:user"));
+    if (user) {
+      this.setState({ user, option: "User" });
+      this.getTasksListUser();
+      this._onRefresh();
+    }
+    if (police) {
+      this.setState({ police, option: "Police" });
+      this.getTasksList();
+      this._onRefresh();
+    }
   }
 
   _onRefresh = () => {
+    const { option } = this.state;
     this.setState({ refreshing: true });
-    this.getTaskList().then(() => {
-      this.setState({ refreshing: false });
-    });
+    if (option === "User") {
+      this.getTasksListUser().then(() => {
+        this.setState({ refreshing: false });
+      });
+    } else if (option === "Police") {
+      this.getTasksList().then(() => {
+        this.setState({ refreshing: false });
+      });
+    }
   };
 
-  getTaskList = async () => {
+  getTasksList = async () => {
+    try {
+      const response = await api.post(`/task/list`);
+      const { tasks } = response.data;
+
+      this.setState({ tasks });
+    } catch (err) {
+      this.setState({ errorMessage: err.data.error });
+    }
+  };
+
+  getTasksListUser = async () => {
     try {
       const user = JSON.parse(await AsyncStorage.getItem("@Security:user"));
       const response = await api.post(`/task/list/${user._id}`);
@@ -81,23 +111,49 @@ export default class Task extends Component {
   };
 
   handleDeleteTask = async id => {
-    await api.delete(`/task/${id}`);
-    alert("Task deletada com sucesso!");
-    this.setState({ refreshing: false });
-    this._onRefresh();
+    try {
+      await api.delete(`/task/${id}`);
+
+      alert("Task deletada com sucesso!");
+
+      this.setState({ refreshing: false });
+
+      this._onRefresh();
+    } catch (err) {
+      this.setState({ errorMessage: err.data.error });
+    }
   };
 
   handleUpdateTask = async id => {
     const { title, description } = this.state;
     if (title === null || description === null) {
       alert("Você não alterou os campos.");
+
       this.showPass();
     } else {
-      await api.put(`/task/${id}`, { title, description });
-      alert("Task atualizada com sucesso!");
-      this.showPass();
-      this.setState({ refreshing: false, title: null, description: null });
+      try {
+        await api.put(`/task/${id}`, { title, description });
+
+        alert("Task atualizada com sucesso!");
+
+        this.showPass();
+
+        this.setState({ refreshing: false, title: null, description: null });
+
+        this._onRefresh();
+      } catch (err) {
+        this.setState({ errorMessage: err.data.error });
+      }
+    }
+  };
+
+  handleSolution = async id => {
+    try {
+      await api.post(`/task/${id}`);
+
       this._onRefresh();
+    } catch (err) {
+      this.setState({ errorMessage: err.data.error });
     }
   };
 
@@ -111,8 +167,8 @@ export default class Task extends Component {
   };
 
   render() {
-    const { tasks, user, editable, refreshing } = this.state;
-    let score = tasks.map(task => {
+    const { tasks, user, police, option, editable, refreshing } = this.state;
+    let scoreUser = tasks.map(task => {
       return (
         <ListItem key={task._id}>
           <ListText style={{ marginBottom: 3 }}>Title</ListText>
@@ -146,10 +202,29 @@ export default class Task extends Component {
         </ListItem>
       );
     });
+    let scorePolice = tasks.map(task => {
+      return (
+        <ListItem key={task._id}>
+          <ListText style={{ marginBottom: 3 }}>Title</ListText>
+          <TitleList placeholder={task.title} />
+          <ListText style={{ marginTop: 5, marginBottom: 3 }}>
+            Descritpion
+          </ListText>
+          <DescriptionList placeholder={task.description} />
+          <ButtonView>
+            <ButtonDelete onPress={() => this.handleSolution(task._id)}>
+              <ButtonDeleteText>Solucionar</ButtonDeleteText>
+            </ButtonDelete>
+          </ButtonView>
+        </ListItem>
+      );
+    });
     return (
       <Container>
-        <TitleContent>Tasks of user</TitleContent>
-        <EmailContent>Email: {user.email}</EmailContent>
+        <TitleContent>Tasks of {option}</TitleContent>
+        <EmailContent>
+          Email: {option === "Police" ? police.email : user.email}
+        </EmailContent>
         <Content
           refreshControl={
             <RefreshControl
@@ -158,9 +233,9 @@ export default class Task extends Component {
             />
           }
         >
-          {score && (
+          {
             <>
-              {score}
+              {option === "Police" ? scorePolice : scoreUser}
               <ListFound>
                 <TitleListFound>Occurence not found</TitleListFound>
                 <DescriptionListFound>
@@ -169,7 +244,7 @@ export default class Task extends Component {
                 </DescriptionListFound>
               </ListFound>
             </>
-          )}
+          }
         </Content>
       </Container>
     );

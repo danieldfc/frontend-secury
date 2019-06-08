@@ -5,13 +5,15 @@ import AsyncStorage from "@react-native-community/async-storage";
 import api from "../../services/api";
 
 import {
-  Container,
-  Title,
+  ContainerProfile,
+  TitleProfile,
   ProfileScrollView,
   EmailInput,
   ButtonUpdate,
   ButtonUpdateText,
-  PasswordInput
+  PasswordInput,
+  ButtonExit,
+  ButtonExitText
 } from "./styles";
 
 export default class Profile extends Component {
@@ -112,6 +114,11 @@ export default class Profile extends Component {
     this._onRefresh();
   };
 
+  handleExit = async () => {
+    await AsyncStorage.setItem("@Security:user", "");
+    this.props.navigation.navigate("Home");
+  };
+
   showPass = () => {
     const { editable } = this.state;
     if (editable === false) {
@@ -131,8 +138,8 @@ export default class Profile extends Component {
   render() {
     const { User, editable, refreshing } = this.state;
     return (
-      <Container>
-        <Title>Profile</Title>
+      <ContainerProfile>
+        <TitleProfile>Profile</TitleProfile>
         <ProfileScrollView
           refreshControl={
             <RefreshControl
@@ -164,8 +171,11 @@ export default class Profile extends Component {
               <ButtonUpdateText>EDIT</ButtonUpdateText>
             </ButtonUpdate>
           )}
+          <ButtonExit onPress={this.handleExit}>
+            <ButtonExitText>EXIT</ButtonExitText>
+          </ButtonExit>
         </ProfileScrollView>
-      </Container>
+      </ContainerProfile>
     );
   }
 }

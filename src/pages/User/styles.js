@@ -100,11 +100,20 @@ export const ButtonUpdateText = styled.Text`
 
 export const Container = styled.View`
   flex: 1;
+  background: #059;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+`;
+
+export const ContainerProfile = styled.View`
+  flex: 1;
   background: #fff;
   justify-content: center;
   align-items: center;
   padding: 20px;
 `;
+
 export const ContainerMapa = styled.View`
   flex: 1;
   background: #059;
@@ -164,14 +173,21 @@ export const LoggedIn = styled.TouchableOpacity`
 export const LoggedInText = styled.Text`
   font-size: 16px;
   font-weight: bold;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.7);
 `;
 
 export const Title = styled.Text`
   font-size: 18px;
+  color: #fff;
+  font-weight: bold;
+  margin: 20px 0;
+`;
+
+export const TitleProfile = styled.Text`
+  font-size: 18px;
   color: #059;
   font-weight: bold;
-  margin: 40px 0;
+  margin: 60px 0;
 `;
 
 export const TitleTask = styled.TextInput`
@@ -190,4 +206,19 @@ export const TitleTaskDesc = styled.Text`
   font-weight: bold;
   color: #999;
   margin-left: 10px;
+`;
+
+export const ButtonExit = styled.TouchableOpacity`
+  width: 300px;
+  border: 1px solid #f00;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ButtonExitText = styled.Text`
+  color: #f00;
+  font-size: 14px;
 `;

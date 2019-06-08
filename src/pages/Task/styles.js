@@ -39,7 +39,7 @@ export const ButtonUpdateText = styled.Text`
 `;
 
 export const Completed = styled.Text`
-  color: black;
+  color: #000;
 `;
 
 export const Container = styled.View`

@@ -3,7 +3,11 @@ import { Animated, StyleSheet } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-community/async-storage";
+import socket from "socket.io-client";
+
+import Map from "../../components/Map";
 import api from "../../services/api";
+import { BaseUrl } from "../../config/auth.json";
 
 import {
   Button,
@@ -55,37 +59,24 @@ export default class MapaPolice extends Component {
   async componentDidMount() {
     const police = await AsyncStorage.getItem("@Security:police");
     const parsed = JSON.parse(police);
+    this.subscribeToNewTask(parsed);
 
     this.setState({ email: parsed.email });
   }
 
-  handlerRegisterTask = async () => {
-    // try {
-    //   const { title, description } = this.state;
-    //   const user = await AsyncStorage.getItem("@Security:user");
-    //   const parsed = JSON.parse(user);
-    //   const { email, location } = parsed;
-    //   alert(JSON.stringify(parsed));
-    //   await api.post("/task", {
-    //     email,
-    //     occurrence: [
-    //       {
-    //         title,
-    //         description
-    //       }
-    //     ]
-    //   });
-    //   alert("Occurrence add with success!");
-    //   this.setState({
-    //     destination: {
-    //       latitude,
-    //       longitude,
-    //       title: data.structured_formatting.main_text
-    //     }
-    //   });
-    // } catch (err) {
-    //   this.setState({ errorMessage: err });
-    // }
+  subscribeToNewTask = user => {
+    const io = socket(BaseUrl);
+
+    io.emit("connectRoom", user);
+
+    io.on("taskCreate", data => {
+      this.setState({
+        occurrence: {
+          ...this.state.occurrence,
+          occurrence: [data, ...this.state.task.occurrence]
+        }
+      });
+    });
   };
 
   render() {

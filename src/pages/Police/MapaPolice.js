@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Animated, StyleSheet } from "react-native";
+import { Animated, StyleSheet, Text } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -50,32 +50,29 @@ export default class MapaPolice extends Component {
     email: null,
     title: null,
     description: null,
-    occurrence: [],
+    task: {},
     errorMessage: null,
     destination: null,
     location: null
   };
 
   async componentDidMount() {
-    const police = await AsyncStorage.getItem("@Security:police");
-    const parsed = JSON.parse(police);
-    this.subscribeToNewTask(parsed);
+    this.subscribeToNewTask();
 
-    this.setState({ email: parsed.email });
+    const task = this.props.navigation.getParam("task", "anonimo");
+    const parsed = JSON.parse(task);
+    this.setState({ task: parsed });
+    // const police = await AsyncStorage.getItem("@Security:police");
+    // const parsed = JSON.parse(police);
+
+    // this.setState({ email: parsed.email });
   }
 
-  subscribeToNewTask = user => {
+  subscribeToNewTask = () => {
     const io = socket(BaseUrl);
 
-    io.emit("connectRoom", user);
-
-    io.on("taskCreate", data => {
-      this.setState({
-        occurrence: {
-          ...this.state.occurrence,
-          occurrence: [data, ...this.state.task.occurrence]
-        }
-      });
+    io.on("task", task => {
+      this.setState({ task: [task, ...this.state.task] });
     });
   };
 
@@ -121,7 +118,7 @@ export default class MapaPolice extends Component {
     return (
       <ContainerMapa>
         <Content>
-          <Map translateY={translateY} option={"Police"} />
+          <Map translateY={translateY} option={"police"} />
           <PanGestureHandler
             onGestureEvent={animatedEvent}
             onHandlerStateChange={onHandlerStateChange}

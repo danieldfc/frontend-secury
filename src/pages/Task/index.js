@@ -64,13 +64,12 @@ export default class Task extends Component {
     if (user) {
       this.setState({ user, option: "User" });
       this.getTasksListUser();
-      this._onRefresh();
     }
     if (police) {
       this.setState({ police, option: "Police" });
       this.getTasksList();
-      this._onRefresh();
     }
+    this._onRefresh();
   }
 
   _onRefresh = () => {
@@ -149,9 +148,12 @@ export default class Task extends Component {
 
   handleSolution = async id => {
     try {
-      await api.post(`/task/${id}`);
-
+      const response = await api.post(`/task/${id}`);
+      const task = JSON.parse(response);
       this._onRefresh();
+      this.props.navigation.navigate("MapaPolice", {
+        task: response
+      });
     } catch (err) {
       this.setState({ errorMessage: err.data.error });
     }
@@ -206,15 +208,27 @@ export default class Task extends Component {
       return (
         <ListItem key={task._id}>
           <ListText style={{ marginBottom: 3 }}>Title</ListText>
-          <TitleList placeholder={task.title} />
+          <TitleList placeholder={task.title} editable={false} />
           <ListText style={{ marginTop: 5, marginBottom: 3 }}>
             Descritpion
           </ListText>
-          <DescriptionList placeholder={task.description} />
+          <DescriptionList placeholder={task.description} editable={false} />
           <ButtonView>
-            <ButtonDelete onPress={() => this.handleSolution(task._id)}>
-              <ButtonDeleteText>Solucionar</ButtonDeleteText>
-            </ButtonDelete>
+            {police.assignedTo !== null ? (
+              <ButtonDelete
+                disabled
+                onPress={() => this.handleSolution(task._id)}
+                style={{ color: "rgba(255,0,0,0.1)" }}
+              >
+                <ButtonDeleteText style={{ color: "rgba(255,0,0,0.3)" }}>
+                  Solucionar
+                </ButtonDeleteText>
+              </ButtonDelete>
+            ) : (
+              <ButtonDelete onPress={() => this.handleSolution(task._id)}>
+                <ButtonDeleteText>Solucionar</ButtonDeleteText>
+              </ButtonDelete>
+            )}
           </ButtonView>
         </ListItem>
       );

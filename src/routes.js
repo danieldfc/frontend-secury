@@ -18,7 +18,7 @@ const Routes = createAppContainer(
     {
       Home,
       Police,
-      MapaPolice: createMaterialBottomTabNavigator(
+      NavPolice: createMaterialBottomTabNavigator(
         {
           TaskPolice,
           MapaPolice,
@@ -31,7 +31,7 @@ const Routes = createAppContainer(
         }
       ),
       User,
-      MapaUser: createMaterialBottomTabNavigator(
+      NavUser: createMaterialBottomTabNavigator(
         {
           MapaUser,
           TaskUser,

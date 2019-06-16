@@ -39,66 +39,34 @@ export default class Map extends Component {
 
   async componentDidMount() {
     const { option } = this.props;
-    if (option === "User") {
-      const user = await AsyncStorage.getItem("@Security:user");
-      const parsed = JSON.parse(user);
 
-      navigator.geolocation.getCurrentPosition(
-        async ({ coords: { latitude, longitude } }) => {
-          const response = await GeoCoder.from({ latitude, longitude });
-          const address = response.results[0].formatted_address;
-          const location = address.substring(0, address.indexOf(","));
-          this.setState({
-            location,
-            region: {
-              latitude,
-              longitude,
-              latitudeDelta: 0.0143,
-              longitudeDelta: 0.0134
-            }
-          });
-          await api.post(`/auth/update/user/${parsed._id}`, {
-            location
-          });
-        }, //success
-        () => {}, //error
-        {
-          timeout: 2000,
-          enableHighAccuracy: true,
-          maximumAge: 1000
-        }
-      );
-    }
-    if (option === "Police") {
-      const police = await AsyncStorage.getItem("@Security:police");
-      const parsed = JSON.parse(police);
-
-      navigator.geolocation.getCurrentPosition(
-        async ({ coords: { latitude, longitude } }) => {
-          const response = await GeoCoder.from({ latitude, longitude });
-          const address = response.results[0].formatted_address;
-          const location = address.substring(0, address.indexOf(","));
-          this.setState({
-            location,
-            region: {
-              latitude,
-              longitude,
-              latitudeDelta: 0.0143,
-              longitudeDelta: 0.0134
-            }
-          });
-          await api.post(`/auth/update/police/${parsed._id}`, {
-            location
-          });
-        }, //success
-        () => {}, //error
-        {
-          timeout: 2000,
-          enableHighAccuracy: true,
-          maximumAge: 1000
-        }
-      );
-    }
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords: { latitude, longitude } }) => {
+        const response = await GeoCoder.from({ latitude, longitude });
+        const address = response.results[0].formatted_address;
+        const location = address.substring(0, address.indexOf(","));
+        this.setState({
+          location,
+          region: {
+            latitude,
+            longitude,
+            latitudeDelta: 0.0143,
+            longitudeDelta: 0.0134
+          }
+        });
+        const optionID = await AsyncStorage.getItem(`@Security:${option}`);
+        const parsed = JSON.parse(optionID);
+        await api.post(`/auth/update/${option}/${parsed._id}`, {
+          location
+        });
+      }, //success
+      () => {}, //error
+      {
+        timeout: 2000,
+        enableHighAccuracy: true,
+        maximumAge: 1000
+      }
+    );
   }
 
   handleLocationDestination = (data, { geometry }) => {

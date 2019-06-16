@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, RefreshControl, Platform } from "react-native";
+import { StyleSheet, RefreshControl, Platform, Alert } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 
 import api from "../../services/api";
@@ -115,8 +115,25 @@ export default class Profile extends Component {
   };
 
   handleExit = async () => {
-    await AsyncStorage.setItem("@Security:police", "");
-    this.props.navigation.navigate("Home");
+    Alert.alert(
+      "Exit",
+      "Do you want to leave?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: async () => (
+            await AsyncStorage.setItem("@Security:police", ""),
+            this.props.navigation.navigate("Home")
+          )
+        }
+      ],
+      { cancelable: false }
+    );
   };
 
   showPass = () => {

@@ -132,7 +132,7 @@ export default class MapaUser extends Component {
     return (
       <ContainerMapa>
         <Content>
-          <Map translateY={translateY} option={"User"} />
+          <Map translateY={translateY} option={"user"} />
           <PanGestureHandler
             onGestureEvent={animatedEvent}
             onHandlerStateChange={onHandlerStateChange}

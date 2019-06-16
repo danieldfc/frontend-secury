@@ -49,7 +49,7 @@ export default class User extends Component {
         loggedInUser: user,
         email: user.email
       });
-      this.props.navigation.navigate("MapaUser");
+      this.props.navigation.navigate("NavUser");
     }
   }
 
@@ -86,7 +86,7 @@ export default class User extends Component {
         password: parsed.password
       });
 
-      this.props.navigation.navigate("MapaUser");
+      this.props.navigation.navigate("NavUser");
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }
@@ -116,7 +116,7 @@ export default class User extends Component {
         ["@Security:user", parsed]
       ]);
 
-      this.props.navigation.navigate("MapaUser");
+      this.props.navigation.navigate("NavUser");
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }
